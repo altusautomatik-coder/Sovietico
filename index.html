@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestão Soviética</title>
+  <link rel="icon" type="image/x-icon" href="icongestao.ico">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0D0D0D">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Gestão Soviética">
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blood: { 900: '#590707', 800: '#8C0712', 600: '#A60A0A', 500: '#F20C0C' },
+            dark: '#0D0D0D',
+            card: '#0D0D0D',
+            profit: '#55E088',
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js">
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js">
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js">
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore-compat.js">
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0D0D0D;
+      color: #e2e8f0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overscroll-behavior: none;
+    }
+    input, button, textarea, select { font-family: inherit; }
+    input:not([type="range"]):not([type="date"]) {
+      background: #0D0D0D;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      border-radius: 0.5rem;
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      text-indent: 2px;
+    }
+    input:not([type="range"]):not([type="date"]):focus { outline: none; border-color: #94A3B8; box-shadow: 0 0 0 3px rgba(140,7,18,0.12); }
+    input:not([type="range"]):not([type="date"]):disabled { opacity: 0.5; cursor: default; }
+    .tab-btn {
+      padding: 0.6rem 1.4rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 0.5rem 0.5rem 0 0;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #94A3B8;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-btn.active { color: #F20C0C; border-bottom-color: #F20C0C; background: rgba(242,12,12,0.06); }
+    .tab-btn:hover:not(.active) { color: #A60A0A; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .card {
+      background: #0D0D0D;
+      border: 1px solid #334155;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5);
+    }
+    .text-label { color: #94A3B8; }
+    .text-profit { color: #55E088; }
+    .card-green {
+      background: #0D0D0D;
+      border: 1px solid #334155;
+      border-radius: 1rem;
+      padding: 1.5rem;
+    }
+    .btn-primary {
+      background: #12823B;
+      color: #f8fafc;
+      border: 1px solid #12823B;
+      font-weight: 700;
+      padding: 0.65rem 1.5rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn-primary:hover { background: #0F6B30; }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+    .stat-label { font-size: 0.7rem; letter-spacing: 0.04em; color: #94A3B8; font-weight: 600; }
+    .stat-card {
+      background: #0D0D0D;
+      border: 1px solid #334155;
+      border-radius: 0.75rem;
+      padding: 1rem 1.2rem;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: #94A3B8; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    th { text-align: left; padding: 0.6rem 0.8rem; color: #94A3B8; font-weight: 600; text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.05em; border-bottom: 1px solid #334155; }
+    td { padding: 0.55rem 0.8rem; border-bottom: 1px solid #0D0D0D; }
+    tr:nth-child(even) td { background: rgba(20,20,32,0.4); }
+    .day-card {
+      background: #0D0D0D;
+      border: 1px solid #334155;
+      border-radius: 0.75rem;
+      padding: 0.9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .day-card:hover { border-color: #94A3B8; }
+    .day-num {
+      width: 2.4rem; height: 2.4rem;
+      border-radius: 0.6rem;
+      background: #0D0D0D;
+      border: 1px solid #334155;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85rem; color: #94A3B8;
+      flex-shrink: 0;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0D0D0D; }
+    ::-webkit-scrollbar-thumb { background: #0D0D0D; border-radius: 3px; }
+    @keyframes slide-in { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+    .animate-slide-in { animation: slide-in 0.25s ease-out; }
+    .calc-btn:active { transform: scale(0.94); }
+    .calc-btn:hover { filter: brightness(1.15); }
+    @media (max-width: 768px) {
+      .card, .card-green { padding: 1rem; }
+      .stat-card { padding: 0.75rem 1rem; }
+      .tab-content.active { padding: 0; }
+      .table-wrap { margin: 0 -0.75rem; }
+    }
+    @media (max-width: 480px) {
+      input:not([type="range"]):not([type="date"]) { padding: 0.55rem 0.75rem; font-size: 16px; }
+      .btn-primary { padding: 0.55rem 1rem; font-size: 0.82rem; }
+      .day-card { padding: 0.7rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Toast -->
+  <div id="toastContainer" class="fixed top-4 right-4 z-[100] flex flex-col gap-2" style="display:none"></div>
+
+  <!-- Confirm Modal -->
+  <div id="confirmModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60" style="display:none">
+    <div class="bg-[#0D0D0D] border border-[#334155] rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+      <p id="confirmMsg" class="text-[#e2e8f0] text-sm mb-5"></p>
+      <div class="flex gap-3 justify-end">
+        <button id="confirmNao" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:#8C0712">Cancelar</button>
+        <button id="confirmSim" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:#12823B">Confirmar</button>
+      </div>
+    </div>
+  </div>
+  <div id="loginOverlay" class="fixed inset-0 z-50 items-center justify-center bg-[#0D0D0D]" style="display:none">
+    <div class="w-full max-w-sm mx-4 p-6 rounded-xl border border-[#334155] bg-[#0D0D0D]">
+      <div class="flex items-center gap-3 mb-6">
+        <img src="icon-192.png" alt="" class="w-10 h-10 rounded-lg bg-slate-700 ring-1 ring-slate-600">
+        <h1 class="text-lg font-bold text-slate-50">Gestão <span class="text-slate-400">Soviética</span></h1>
+      </div>
+      <div id="loginForm">
+        <input id="loginEmail" type="email" placeholder="E-mail" class="w-full mb-3 px-4 py-2.5 rounded-lg border border-[#334155] bg-[#0D0D0D] text-[#e2e8f0] text-sm placeholder-[#94A3B8] focus:outline-none focus:border-[#12823B]">
+        <input id="loginSenha" type="password" placeholder="Senha" class="w-full mb-4 px-4 py-2.5 rounded-lg border border-[#334155] bg-[#0D0D0D] text-[#e2e8f0] text-sm placeholder-[#94A3B8] focus:outline-none focus:border-[#12823B]">
+        <button id="loginBtn" class="w-full py-2.5 rounded-lg font-semibold text-sm text-white" style="background:#12823B">Entrar</button>
+        <p class="mt-3 text-center text-xs text-[#94A3B8]">Não tem conta? <button id="mostrarCadastroBtn" class="text-[#55E088] hover:underline bg-transparent border-none p-0 cursor-pointer text-xs">Cadastrar</button></p>
+      </div>
+      <div id="cadastroForm" class="hidden">
+        <input id="cadastroEmail" type="email" placeholder="E-mail" class="w-full mb-3 px-4 py-2.5 rounded-lg border border-[#334155] bg-[#0D0D0D] text-[#e2e8f0] text-sm placeholder-[#94A3B8] focus:outline-none focus:border-[#12823B]">
+        <input id="cadastroSenha" type="password" placeholder="Senha (mín. 6 caracteres)" class="w-full mb-4 px-4 py-2.5 rounded-lg border border-[#334155] bg-[#0D0D0D] text-[#e2e8f0] text-sm placeholder-[#94A3B8] focus:outline-none focus:border-[#12823B]">
+        <button id="cadastroBtn" class="w-full py-2.5 rounded-lg font-semibold text-sm text-white" style="background:#12823B">Cadastrar</button>
+        <p class="mt-3 text-center text-xs text-[#94A3B8]">Já tem conta? <button id="mostrarLoginBtn" class="text-[#55E088] hover:underline bg-transparent border-none p-0 cursor-pointer text-xs">Entrar</button></p>
+      </div>
+    </div>
+  </div>
+  <div class="max-w-6xl mx-auto px-4 py-4 sm:py-6" style="padding-left:max(1rem,env(safe-area-inset-left,1rem));padding-right:max(1rem,env(safe-area-inset-right,1rem))">
+    <!-- Header -->
+    <div class="mb-4 sm:mb-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+          <img src="icon-192.png" alt="" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-700 ring-1 ring-slate-600 flex-shrink-0">
+          <h1 class="text-base sm:text-xl font-bold tracking-tight text-slate-50">Gestão <span class="text-slate-400">Soviética</span></h1>
+        </div>
+        <div id="userArea" class="hidden flex-row sm:flex-col items-end flex-shrink-0">
+          <span id="headerUserEmail" class="hidden sm:block text-xs text-[#94A3B8] mb-2"></span>
+          <div class="flex gap-1.5 sm:gap-2">
+            <button id="headerSyncBtn" class="px-2 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold text-white whitespace-nowrap" style="background:#12823B;display:none">Sync</button>
+            <button id="headerLogoutBtn" class="px-2 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold text-white whitespace-nowrap" style="background:#8C0712;">Sair</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex border-b border-gray-800 mb-6 gap-0 sm:gap-1 sm:overflow-visible">
+      <button class="tab-btn active flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="capital"><span class="sm:hidden">📊 Capital</span><span class="hidden sm:inline">📊 Gerenciamento de Capital</span></button>
+      <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="diario"><span class="sm:hidden">📅 Diário</span><span class="hidden sm:inline">📅 Acompanhamento Diário</span></button>
+      <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="calc"><span class="sm:hidden">🔢</span><span class="hidden sm:inline">🔢 Calculadora</span></button>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- TAB 1: CAPITAL -->
+    <!-- ================================================================ -->
+    <div id="tab-capital" class="tab-content active">
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <!-- LEFT: Config -->
+        <div class="lg:col-span-2">
+          <div class="card-green">
+            <h2 class="text-sm font-bold text-slate-50 mb-5">Configurações do Capital</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="stat-label block mb-1.5">Valor Inicial (R$)</label>
+                <input type="text" id="cfgValorInicial" value="1000" inputmode="decimal" />
+              </div>
+              <div>
+                <label class="stat-label block mb-1.5">Meta de Lucro (%)</label>
+                <input type="number" id="cfgMetaLucro" value="20" min="1" max="500" step="1" />
+              </div>
+              <div>
+                <label class="stat-label block mb-1.5">% por Trade</label>
+                <input type="number" id="cfgPorcTrade" value="2" min="0.5" max="20" step="0.5" />
+              </div>
+              <div>
+                <label class="stat-label block mb-1.5">% Stop Win</label>
+                <input type="number" id="cfgStopWin" value="10" min="1" max="50" step="1" />
+              </div>
+              <div>
+                <label class="stat-label block mb-1.5">% Stop Loss</label>
+                <input type="number" id="cfgStopLoss" value="5" min="1" max="50" step="1" />
+              </div>
+              <button class="btn-primary w-full" id="salvarConfigBtn">Salvar Configurações</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Projections -->
+        <div class="lg:col-span-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="stat-card border-l-4 border-l-slate-700">
+              <div class="stat-label">Capital Inicial</div>
+              <div class="text-xl font-bold text-slate-50 mt-1" id="dispCapitalInicial">R$ 1.000,00</div>
+            </div>
+            <div class="stat-card border-l-4 border-l-slate-700">
+              <div class="stat-label">Capital Atual</div>
+              <div class="text-xl font-bold text-slate-50 mt-1" id="dispCapitalAtual">R$ 1.000,00</div>
+              <div class="text-xs text-gray-500 mt-0.5" id="dispVariacao">+0,0% desde o início</div>
+            </div>
+            <div class="stat-card border-l-4 border-l-slate-700">
+              <div class="stat-label">Meta de Lucro (R$)</div>
+              <div class="text-xl font-bold text-slate-50 mt-1" id="dispMetaLucro">R$ 200,00</div>
+            </div>
+            <div class="stat-card border-l-4 border-l-slate-700">
+              <div class="stat-label">Stop Win (R$)</div>
+              <div class="text-xl font-bold" id="dispStopWin" style="color:#55E088">R$ 100,00</div>
+            </div>
+            <div class="stat-card border-l-4 border-l-slate-700">
+              <div class="stat-label">Stop Loss (R$)</div>
+              <div class="text-xl font-bold text-red-500 mt-1" id="dispStopLoss">R$ 50,00</div>
+            </div>
+            <div class="stat-card border-l-4 border-l-slate-700">
+              <div class="stat-label">Valor por Trade (R$)</div>
+              <div class="text-xl font-bold text-slate-50 mt-1" id="dispValorTrade">R$ 20,00</div>
+            </div>
+            <div class="stat-card border-l-4 border-l-slate-700">
+              <div class="stat-label">Win Rate (%)</div>
+              <div class="text-xl font-bold text-slate-50 mt-1" id="dispWinRate">0,0%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- TAB 2: DIARIO -->
+    <!-- ================================================================ -->
+    <div id="tab-diario" class="tab-content">
+      <!-- Section 1: Summary -->
+      <h2 class="text-sm font-bold text-slate-50 mb-2 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#55E088" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Resumo do Mês</h2>
+      <div style="background:#0D0D0D;border:1px solid #334155;border-radius:1rem;padding:1rem 1.25rem;" class="mb-5">
+        <div class="grid grid-cols-3 gap-3 sm:gap-4 text-center">
+          <div>
+            <span class="stat-label"><span class="sm:hidden">Capital</span><span class="hidden sm:inline">Capital Atual (Total)</span></span>
+            <div class="text-base sm:text-xl font-bold text-slate-50 mt-0.5" id="diarioTotalCapital">R$ 1.000,00</div>
+          </div>
+          <div>
+            <span class="stat-label"><span class="sm:hidden">Placar</span><span class="hidden sm:inline">Placar Geral</span></span>
+            <div class="text-base sm:text-xl font-bold mt-0.5" id="diarioPlacar"><span class="text-profit">0</span> x <span class="text-red-500">0</span></div>
+          </div>
+          <div>
+            <span class="stat-label"><span class="sm:hidden">Operações</span><span class="hidden sm:inline">Total de Operações</span></span>
+            <div class="text-base sm:text-xl font-bold text-slate-50 mt-0.5" id="diarioTotalOps">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Chart -->
+      <div class="card mb-5">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-1">
+          <h2 class="text-sm font-bold text-slate-50 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#55E088" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Evolução do Capital</h2>
+          <div class="flex items-center gap-3 text-[11px] font-semibold">
+            <span class="text-[#64748B]">Início: <span id="chartLabelInicio">R$ 1.000,00</span></span>
+            <span id="chartLabelAtualWrapper">Atual: <span id="chartLabelAtual">R$ 1.000,00</span></span>
+          </div>
+        </div>
+        <div class="relative h-48 sm:h-64">
+          <canvas id="chartDiario"></canvas>
+        </div>
+      </div>
+
+      <!-- Section 3: Records -->
+      <div class="card">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-sm font-bold text-slate-50">Mês Atual</h2>
+          <span class="text-xs text-gray-600 font-medium" id="diarioMesAno"></span>
+        </div>
+
+        <!-- New record form -->
+        <div class="flex flex-wrap items-end gap-3 mb-5 p-4 rounded-lg bg-[#0D0D0D] border border-[#334155]">
+          <div class="flex-1 min-w-[80px]">
+            <label class="stat-label block mb-1">Dia</label>
+            <input type="number" id="novoDia" value="" min="1" max="31" placeholder="ex: 1-31" />
+          </div>
+          <div class="flex-1 min-w-[80px]">
+            <label class="stat-label block mb-1">Acertos</label>
+            <input type="number" id="novoAcertos" value="" min="0" placeholder="ex: 5" />
+          </div>
+          <div class="flex-1 min-w-[80px]">
+            <label class="stat-label block mb-1">Erros</label>
+            <input type="number" id="novoErros" value="" min="0" placeholder="ex: 3" />
+          </div>
+          <div class="flex-1 min-w-[100px]">
+            <label class="stat-label block mb-1">Resultado (R$)</label>
+            <input type="text" id="novoResultado" value="" inputmode="decimal" placeholder="ex: 120,00" />
+          </div>
+          <button class="btn-primary h-[42px]" id="adicionarDiaBtn">Adicionar Dia</button>
+        </div>
+
+        <!-- Records list -->
+        <div id="diarioLista"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- TAB 3: CALCULADORA -->
+  <!-- ================================================================ -->
+  <div id="tab-calc" class="tab-content">
+    <div class="card mx-3 sm:mx-auto mb-4 sm:max-w-sm">
+      <h2 class="text-sm font-bold text-slate-50 mb-4 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="8" y2="10"/><line x1="12" y1="10" x2="12" y2="10"/><line x1="16" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="8" y2="18"/><line x1="12" y1="18" x2="12" y2="18"/></svg> Calculadora</h2>
+      <div class="bg-[#0D0D0D] border border-[#334155] rounded-xl p-4">
+        <input type="text" id="calcDisplay" value="0" inputmode="decimal" class="text-right text-2xl font-bold py-3 px-4 mb-4 rounded-lg min-h-[56px]" style="background:#0D0D0D;border:1px solid #334155;color:#F8FAFC;width:100%;outline:none" />
+        <div class="grid grid-cols-4 gap-2">
+          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="7">7</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="8">8</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="9">9</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#8C0712;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="/">÷</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="4">4</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="5">5</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="6">6</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#8C0712;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="*">×</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="1">1</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="2">2</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="3">3</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#8C0712;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="-">−</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="0">0</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc=".">,</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#12823B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="=">=</button>
+          <button class="calc-btn text-lg font-semibold" style="background:#8C0712;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="+">+</button>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mt-2">
+          <button id="calcClear" class="py-2 rounded-lg text-sm font-semibold text-white" style="background:#1E293B;border:1px solid #334155">C</button>
+          <button id="calcBackspace" class="py-2 rounded-lg text-sm font-semibold text-white" style="background:#1E293B;border:1px solid #334155">⌫</button>
+        </div>
+      </div>
+    </div>
+    <div class="card mx-3 sm:mx-auto mb-4 sm:max-w-sm">
+      <h2 class="text-sm font-bold text-slate-50 mb-3 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Anotações</h2>
+      <textarea id="calcNotas" class="w-full rounded-lg text-sm text-[#e2e8f0] placeholder-[#94A3B8] resize-none" style="background:#0D0D0D;border:1px solid #334155;padding:0.75rem;min-height:100px;outline:none" placeholder="Escreva suas anotações aqui..."></textarea>
+    </div>
+  </div>
+
+  <script>
+    // ================================================================
+    // CONSTANTS
+    // ================================================================
+    const parseVal = (v) => parseFloat(String(v).replace(',', '.')) || 0;
+    const toastContainer = document.getElementById('toastContainer');
+
+    function mostrarToast(msg, tipo) {
+      const cores = { erro: '#F20C0C', sucesso: '#55E088', aviso: '#94A3B8' };
+      const cor = cores[tipo] || '#94A3B8';
+      const el = document.createElement('div');
+      el.className = 'flex items-center gap-3 px-4 py-3 rounded-lg border text-sm font-medium shadow-lg animate-slide-in';
+      el.style.cssText = 'background:#0D0D0D;border-color:' + cor + ';color:#e2e8f0;border-width:1px;';
+      el.innerHTML = '<span style="color:' + cor + '">●</span> ' + msg;
+      toastContainer.style.display = 'flex';
+      toastContainer.appendChild(el);
+      setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => { el.remove(); if (!toastContainer.children.length) toastContainer.style.display = 'none'; }, 300); }, 2800);
+    }
+
+    function mostrarConfirm(msg) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById('confirmModal');
+        document.getElementById('confirmMsg').textContent = msg;
+        modal.style.display = 'flex';
+        const limpar = () => { modal.style.display = 'none'; document.getElementById('confirmSim').onclick = null; document.getElementById('confirmNao').onclick = null; };
+        document.getElementById('confirmSim').onclick = () => { limpar(); resolve(true); };
+        document.getElementById('confirmNao').onclick = () => { limpar(); resolve(false); };
+      });
+    }
+
+    // ================================================================
+    // FIREBASE
+    // ================================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyAquwhJWvGaTkbHR_NK1ct_aUjsJPwic_o",
+      authDomain: "gestaosovietica-84a1d.firebaseapp.com",
+      projectId: "gestaosovietica-84a1d",
+      storageBucket: "gestaosovietica-84a1d.firebasestorage.app",
+      messagingSenderId: "805833584423",
+      appId: "1:805833584423:web:59af565ae6ee999b604302",
+      measurementId: "G-CFP00FW8CF"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let usuarioAtual = null;
+
+    function mostrarErro(msg) {
+      mostrarToast(msg, 'erro');
+    }
+
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const senha = document.getElementById('loginSenha').value;
+      try {
+        document.getElementById('loginBtn').disabled = true;
+        document.getElementById('loginBtn').textContent = 'Entrando...';
+        await auth.signInWithEmailAndPassword(email, senha);
+      } catch (e) {
+        document.getElementById('loginBtn').disabled = false;
+        document.getElementById('loginBtn').textContent = 'Entrar';
+        mostrarErro(e.message);
+      }
+    });
+
+    document.getElementById('cadastroBtn').addEventListener('click', async () => {
+      const email = document.getElementById('cadastroEmail').value.trim();
+      const senha = document.getElementById('cadastroSenha').value;
+      try {
+        document.getElementById('cadastroBtn').disabled = true;
+        document.getElementById('cadastroBtn').textContent = 'Cadastrando...';
+        await auth.createUserWithEmailAndPassword(email, senha);
+      } catch (e) {
+        document.getElementById('cadastroBtn').disabled = false;
+        document.getElementById('cadastroBtn').textContent = 'Cadastrar';
+        mostrarErro(e.message);
+      }
+    });
+
+    document.getElementById('headerLogoutBtn').addEventListener('click', () => auth.signOut());
+
+    document.getElementById('headerSyncBtn').addEventListener('click', async () => {
+      if (!usuarioAtual) { mostrarToast('Não logado', 'aviso'); return; }
+      try {
+        const doc = await db.collection('dados').doc(usuarioAtual.uid).get();
+        if (doc.exists) {
+          const data = doc.data();
+          mostrarToast('Firestore: ' + (data.registros?.length || 0) + ' | Local: ' + state.registros.length, 'sucesso');
+        } else {
+          mostrarToast('Firestore: documento não existe', 'aviso');
+        }
+      } catch (e) {
+        mostrarToast('Erro: ' + e.message, 'erro');
+      }
+    });
+
+    document.getElementById('mostrarCadastroBtn').addEventListener('click', () => {
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('cadastroForm').classList.remove('hidden');
+    });
+
+    document.getElementById('mostrarLoginBtn').addEventListener('click', () => {
+      document.getElementById('cadastroForm').classList.add('hidden');
+      document.getElementById('loginForm').classList.remove('hidden');
+    });
+
+    async function carregarFirestore() {
+      if (!usuarioAtual) return;
+      try {
+        const doc = await db.collection('dados').doc(usuarioAtual.uid).get();
+        if (doc.exists) {
+          const data = doc.data();
+          if (data.config) state.config = data.config;
+          if (data.registros) state.registros = data.registros;
+          state.capitalAtual = state.config.valorInicial + state.registros.reduce((s, r) => s + r.resultado, 0);
+          if (state.capitalAtual < 0) state.capitalAtual = 0;
+          localStorage.setItem('capitalPro', JSON.stringify(state));
+          console.log('Firestore: dados carregados (' + state.registros.length + ' registros)');
+        } else {
+          console.log('Firestore: documento nao existe, enviando dados locais...');
+          salvarFirestore();
+        }
+      } catch (e) {
+        console.error('Firestore: erro ao carregar', e);
+        mostrarToast('Erro ao carregar dados da nuvem: ' + e.message, 'erro');
+      }
+    }
+
+    function salvarFirestore() {
+      if (!usuarioAtual) return;
+      db.collection('dados').doc(usuarioAtual.uid).set({
+        config: state.config,
+        registros: state.registros,
+      }).then(() => {
+        console.log('Firestore: salvo com sucesso');
+      }).catch((e) => {
+        console.error('Firestore: erro ao salvar', e);
+        mostrarToast('Erro ao sincronizar com nuvem: ' + e.message, 'erro');
+      });
+    }
+
+    function mostrarApp(mostrar) {
+      document.getElementById('loginOverlay').style.display = mostrar ? 'none' : 'flex';
+    }
+
+    auth.onAuthStateChanged(async (user) => {
+      usuarioAtual = user;
+      if (user) {
+        document.getElementById('headerUserEmail').textContent = user.email;
+        document.getElementById('userArea').classList.remove('hidden');
+        document.getElementById('loginForm').classList.add('hidden');
+        document.getElementById('cadastroForm').classList.add('hidden');
+        mostrarApp(true);
+        aplicarConfigNoForm(state.config);
+        atualizarPaginaCapital();
+        atualizarResumoDiario();
+        atualizarChartDiario();
+        renderizarRegistros();
+        await carregarFirestore();
+        if (state.registros.length > 0) {
+          persistir();
+          aplicarConfigNoForm(state.config);
+          atualizarPaginaCapital();
+          atualizarResumoDiario();
+          atualizarChartDiario();
+          renderizarRegistros();
+        }
+      } else {
+        mostrarApp(false);
+        document.getElementById('userArea').classList.add('hidden');
+        document.getElementById('cadastroForm').classList.add('hidden');
+        document.getElementById('loginForm').classList.remove('hidden');
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginSenha').value = '';
+      }
+    });
+
+    // ================================================================
+    // STATE (persisted in localStorage + Firestore)
+    // ================================================================
+    function carregarState() {
+      try {
+        const raw = localStorage.getItem('capitalPro');
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (data.bancaAtual !== undefined) {
+            data.capitalAtual = data.bancaAtual;
+            delete data.bancaAtual;
+          }
+          return data;
+        }
+      } catch (_) {}
+      return {
+        config: { valorInicial: 1000, metaLucro: 20, porcTrade: 2, stopWin: 10, stopLoss: 5 },
+        registros: [],
+        capitalAtual: null,
+      };
+    }
+
+    const state = carregarState();
+    if (state.capitalAtual === null) state.capitalAtual = state.config.valorInicial;
+
+    function persistir() {
+      localStorage.setItem('capitalPro', JSON.stringify(state));
+      if (usuarioAtual) salvarFirestore();
+    }
+
+    // ================================================================
+    // DOM REFS
+    // ================================================================
+    const $ = id => document.getElementById(id);
+
+    // Config inputs
+    const cfgValorInicial = $('cfgValorInicial');
+    const cfgMetaLucro = $('cfgMetaLucro');
+    const cfgPorcTrade = $('cfgPorcTrade');
+    const cfgStopWin = $('cfgStopWin');
+    const cfgStopLoss = $('cfgStopLoss');
+
+    // Config displays
+    const dispCapitalInicial = $('dispCapitalInicial');
+    const dispCapitalAtual = $('dispCapitalAtual');
+    const dispVariacao = $('dispVariacao');
+    const dispMetaLucro = $('dispMetaLucro');
+    const dispStopWin = $('dispStopWin');
+    const dispStopLoss = $('dispStopLoss');
+    const dispValorTrade = $('dispValorTrade');
+
+    // Diario
+    const diarioTotalCapital = $('diarioTotalCapital');
+    const diarioPlacar = $('diarioPlacar');
+    const diarioTotalOps = $('diarioTotalOps');
+    const diarioMesAno = $('diarioMesAno');
+    const diarioLista = $('diarioLista');
+    const novoDia = $('novoDia');
+    const novoAcertos = $('novoAcertos');
+    const novoErros = $('novoErros');
+    const novoResultado = $('novoResultado');
+    const adicionarDiaBtn = $('adicionarDiaBtn');
+
+    // ================================================================
+    // FORMATTING
+    // ================================================================
+    const fmt = (v) => {
+      const s = v >= 0 ? '+' : '';
+      return s + 'R$ ' + v.toFixed(2).replace('.', ',');
+    };
+    const fmtB = (v) => 'R$ ' + v.toFixed(2).replace('.', ',');
+
+    // ================================================================
+    // CHART
+    // ================================================================
+    let chartDiario = null;
+
+    function initChartDiario() {
+      const ctx = document.getElementById('chartDiario').getContext('2d');
+      const dadoInicial = state.capitalAtual - state.registros.reduce((s, r) => s + r.resultado, 0);
+      const capitalInicial = state.config.valorInicial;
+      const corInicial = dadoInicial < capitalInicial ? '#F20C0C' : '#55E088';
+
+      // Bar chart icon for legend
+      const icoCanvas = document.createElement('canvas');
+      icoCanvas.width = 20;
+      icoCanvas.height = 16;
+      const icoCtx = icoCanvas.getContext('2d');
+      function desenharIcone(cor) {
+        icoCtx.clearRect(0, 0, 20, 16);
+        icoCtx.fillStyle = cor;
+        const bw = 4, gap = 3, bars = [8, 14, 11];
+        for (let i = 0; i < 3; i++) {
+          const bx = 2 + i * (bw + gap);
+          const by = 15;
+          icoCtx.fillRect(bx, by - bars[i], bw, bars[i]);
+        }
+      }
+
+      chartDiario = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Início'],
+          datasets: [{
+            label: ' Capital (R$)',
+            data: [dadoInicial],
+borderColor: corInicial,
+              backgroundColor: function(ctx) {
+                if (!ctx.chart.chartArea) return corInicial === '#F20C0C' ? 'rgba(242,12,12,0.08)' : 'rgba(85,224,136,0.08)';
+                const {top, bottom} = ctx.chart.chartArea;
+                const grad = ctx.chart.ctx.createLinearGradient(0, top, 0, bottom);
+                const r = corInicial === '#F20C0C' ? '242,12,12' : '85,224,136';
+                grad.addColorStop(0, `rgba(${r},0.3)`);
+                grad.addColorStop(1, `rgba(${r},0)`);
+                return grad;
+              },
+              fill: true,
+              tension: 0.3,
+              pointRadius: 4,
+              pointBackgroundColor: function(ctx) {
+                return ctx.parsed.y < state.config.valorInicial ? '#F20C0C' : '#55E088';
+              },
+            pointHoverRadius: 6,
+            borderWidth: 2.5,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { intersect: false, mode: 'index' },
+          plugins: {
+            legend: {
+              labels: {
+                color: corInicial,
+                font: { size: 13, weight: '900' },
+                boxWidth: 20,
+                boxHeight: 16,
+                padding: 12,
+                boxPadding: 4,
+                usePointStyle: true,
+                pointStyle: (desenharIcone(corInicial), icoCanvas),
+              },
+            },
+            tooltip: {
+              backgroundColor: '#0D0D0D',
+              titleColor: '#e2e8f0',
+              bodyColor: '#55E088',
+              borderColor: '#334155',
+              borderWidth: 1,
+              padding: 10,
+              displayColors: false,
+              callbacks: {
+                label: (ctx) => 'R$ ' + ctx.parsed.y.toFixed(2).replace('.', ','),
+                labelTextColor: (ctx) => ctx.parsed.y < state.config.valorInicial ? '#F20C0C' : '#55E088',
+              },
+            }
+          },
+          scales: {
+            x: { ticks: { color: '#334155', maxTicksLimit: 8, font: { size: 11 } }, grid: { color: '#0D0D0D', drawBorder: false } },
+            y: { ticks: { color: '#334155', font: { size: 11 }, callback: (v) => 'R$' + v.toFixed(0) }, grid: { color: '#0D0D0D', drawBorder: false } }
+          }
+        }
+      });
+      chartDiario._icoCanvas = icoCanvas;
+      chartDiario._desenharIcone = desenharIcone;
+
+      document.getElementById('chartLabelInicio').textContent = fmtB(dadoInicial);
+      document.getElementById('chartLabelAtual').textContent = fmtB(dadoInicial);
+      document.getElementById('chartLabelAtualWrapper').style.color = corInicial;
+    }
+
+    function atualizarChartDiario() {
+      if (!chartDiario) return;
+      const sorted = [...state.registros].sort((a, b) => a.dia - b.dia);
+      let acc = state.config.valorInicial;
+      const labels = ['Início'];
+      const data = [acc];
+      for (const r of sorted) {
+        acc += r.resultado;
+        labels.push('Dia ' + r.dia);
+        data.push(acc);
+      }
+      console.log('Chart data:', JSON.stringify(data));
+      chartDiario.data.labels = labels;
+      chartDiario.data.datasets[0].data = data;
+      const ultimoValor = data[data.length - 1];
+      const capitalInicial = state.config.valorInicial;
+      const cor = ultimoValor < capitalInicial ? '#F20C0C' : '#55E088';
+      chartDiario.options.plugins.legend.labels.color = cor;
+      chartDiario._desenharIcone(cor);
+      chartDiario.data.datasets[0].borderColor = cor;
+      chartDiario.data.datasets[0].pointBackgroundColor = function(ctx) {
+        return ctx.parsed.y < state.config.valorInicial ? '#F20C0C' : '#55E088';
+      };
+      chartDiario.data.datasets[0].backgroundColor = function(ctx) {
+        if (!ctx.chart.chartArea) return 'rgba(0,0,0,0)';
+        const {top, bottom} = ctx.chart.chartArea;
+        const grad = ctx.chart.ctx.createLinearGradient(0, top, 0, bottom);
+        const r = ultimoValor < capitalInicial ? '242,12,12' : '85,224,136';
+        grad.addColorStop(0, `rgba(${r},0.3)`);
+        grad.addColorStop(1, `rgba(${r},0)`);
+        return grad;
+      };
+      chartDiario.update('none');
+      chartDiario.resize();
+
+      const ultimo = data[data.length - 1];
+      document.getElementById('chartLabelInicio').textContent = fmtB(data[0]);
+      const lblAtual = document.getElementById('chartLabelAtual');
+      lblAtual.textContent = fmtB(ultimo);
+      document.getElementById('chartLabelAtualWrapper').style.color = ultimo < state.config.valorInicial ? '#F20C0C' : '#55E088';
+    }
+
+    // ================================================================
+    // PAGE 1: CAPITAL CALCULATIONS
+    // ================================================================
+    function lerConfigForm() {
+      return {
+        valorInicial: parseVal(cfgValorInicial.value),
+        metaLucro: parseFloat(cfgMetaLucro.value) || 0,
+        porcTrade: parseFloat(cfgPorcTrade.value) || 0,
+        stopWin: parseFloat(cfgStopWin.value) || 0,
+        stopLoss: parseFloat(cfgStopLoss.value) || 0,
+      };
+    }
+
+    function aplicarConfigNoForm(cfg) {
+      cfgValorInicial.value = cfg.valorInicial;
+      cfgMetaLucro.value = cfg.metaLucro;
+      cfgPorcTrade.value = cfg.porcTrade;
+      cfgStopWin.value = cfg.stopWin;
+      cfgStopLoss.value = cfg.stopLoss;
+    }
+
+    function atualizarPaginaCapital() {
+      const cfg = lerConfigForm();
+      const capitalInicial = cfg.valorInicial;
+      const capitalAtual = state.capitalAtual;
+      const variacao = capitalInicial > 0 ? ((capitalAtual - capitalInicial) / capitalInicial) * 100 : 0;
+      const metaValor = capitalAtual * (cfg.metaLucro / 100);
+      const stopWinValor = capitalAtual * (cfg.stopWin / 100);
+      const stopLossValor = capitalAtual * (cfg.stopLoss / 100);
+      const valorTrade = capitalAtual * (cfg.porcTrade / 100);
+
+      dispCapitalInicial.textContent = fmtB(capitalInicial);
+      dispCapitalAtual.textContent = fmtB(capitalAtual);
+      dispVariacao.textContent = (variacao >= 0 ? '+' : '') + variacao.toFixed(1) + '% desde o início';
+      dispVariacao.className = 'text-xs mt-0.5 ' + (variacao >= 0 ? 'text-teal-500' : 'text-red-500');
+      dispMetaLucro.textContent = fmtB(metaValor);
+      dispStopWin.textContent = fmtB(stopWinValor);
+      dispStopLoss.textContent = fmtB(stopLossValor);
+      dispValorTrade.textContent = fmtB(valorTrade);
+
+      // Win Rate calculation based on current placar
+      let totalWins = 0, totalLosses = 0;
+      for (const r of state.registros) {
+        totalWins += r.acertos;
+        totalLosses += r.erros;
+      }
+      const totalTrades = totalWins + totalLosses;
+      const winRate = totalTrades > 0 ? (totalWins / totalTrades) * 100 : 0;
+      const wrEl = document.getElementById('dispWinRate');
+      wrEl.textContent = winRate.toFixed(1) + '%';
+      wrEl.style.color = winRate >= 50 ? '#55E088' : '#F20C0C';
+    }
+
+    // ================================================================
+    // PAGE 2: DIARIO
+    // ================================================================
+
+    function atualizarResumoDiario() {
+      diarioTotalCapital.textContent = fmtB(state.capitalAtual);
+      let totalWins = 0, totalLosses = 0;
+      for (const r of state.registros) {
+        totalWins += r.acertos;
+        totalLosses += r.erros;
+      }
+      diarioPlacar.innerHTML = '<span class="text-profit">' + totalWins + '</span> x <span class="text-red-500">' + totalLosses + '</span>';
+      diarioTotalOps.textContent = totalWins + totalLosses;
+    }
+
+    function renderizarRegistros() {
+      if (state.registros.length === 0) {
+        diarioLista.innerHTML = '<p class="text-gray-600 text-center py-6 text-sm">Nenhum registro no mês atual.</p>';
+        return;
+      }
+      const sorted = [...state.registros].sort((a, b) => a.dia - b.dia);
+      let html = '<div class="space-y-2">';
+      for (const r of sorted) {
+        const cor = r.resultado >= 0 ? 'text-profit' : 'text-red-500';
+        html += `
+          <div class="day-card">
+            <div class="day-num">${r.dia}</div>
+            <div class="flex-1 min-w-0">
+              <div class="grid grid-cols-[1fr_auto] sm:grid-cols-2 gap-x-3 items-start">
+                <span class="text-[10px] text-[#94A3B8] font-semibold uppercase tracking-wider">Placar</span>
+                <span class="text-[10px] text-[#94A3B8] font-semibold uppercase tracking-wider">Resultado</span>
+                <span class="text-sm text-gray-300 font-medium"><span class="text-profit">${r.acertos}</span> x <span class="text-red-500">${r.erros}</span></span>
+                <span class="text-sm font-semibold ${cor}">${fmt(r.resultado)}</span>
+              </div>
+            </div>
+            <button class="delete-btn" data-dia="${r.dia}" title="Excluir dia" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;transition:background 0.2s;flex-shrink:0;margin-right:-4px;" onmouseover="this.style.background='#590707'" onmouseout="this.style.background='transparent'">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F20C0C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>`;
+      }
+      html += '</div>';
+      diarioLista.innerHTML = html;
+    }
+
+    function adicionarDia() {
+      const dia = parseInt(novoDia.value);
+      const acertos = parseInt(novoAcertos.value) || 0;
+      const erros = parseInt(novoErros.value) || 0;
+      const resultado = parseVal(novoResultado.value);
+
+      if (!dia || dia < 1 || dia > 31) { mostrarToast('Informe um dia válido (1-31).', 'aviso'); return; }
+      if (state.registros.some(r => r.dia === dia)) { mostrarToast('Dia ' + dia + ' já registrado.', 'erro'); return; }
+
+      state.registros.push({ dia, acertos, erros, resultado });
+      state.capitalAtual += resultado;
+      if (state.capitalAtual < 0) state.capitalAtual = 0;
+      persistir();
+
+      atualizarResumoDiario();
+      atualizarChartDiario();
+      renderizarRegistros();
+      atualizarPaginaCapital();
+
+      novoDia.value = '';
+      novoAcertos.value = '0';
+      novoErros.value = '0';
+      novoResultado.value = '0';
+    }
+
+    async function deletarRegistro(dia) {
+      if (!await mostrarConfirm('Excluir registro do Dia ' + dia + '?')) return;
+      const idx = state.registros.findIndex(r => r.dia === dia);
+      if (idx === -1) return;
+      const removido = state.registros.splice(idx, 1)[0];
+      state.capitalAtual -= removido.resultado;
+      if (state.capitalAtual < 0) state.capitalAtual = 0;
+      persistir();
+      atualizarResumoDiario();
+      atualizarChartDiario();
+      renderizarRegistros();
+      atualizarPaginaCapital();
+    }
+
+    diarioLista.addEventListener('click', (e) => {
+      const btn = e.target.closest('.delete-btn');
+      if (btn) deletarRegistro(parseInt(btn.dataset.dia));
+    });
+
+    adicionarDiaBtn.addEventListener('click', adicionarDia);
+
+    // ================================================================
+    // TABS
+    // ================================================================
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        const syncBtn = document.getElementById('headerSyncBtn');
+        if (syncBtn) syncBtn.style.display = btn.dataset.tab === 'diario' ? '' : 'none';
+        if (chartDiario) {
+          chartDiario.resize();
+          chartDiario.update('none');
+        }
+      });
+    });
+
+    // Swipe to change tabs
+    let touchStartX = 0;
+    let touchStartY = 0;
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+    document.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].screenX - touchStartX;
+      const dy = e.changedTouches[0].screenY - touchStartY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        const tabs = document.querySelectorAll('.tab-btn');
+        const ativo = document.querySelector('.tab-btn.active');
+        const idx = Array.from(tabs).indexOf(ativo);
+        if (dx < 0 && idx < tabs.length - 1) tabs[idx + 1].click();
+        else if (dx > 0 && idx > 0) tabs[idx - 1].click();
+      }
+    }, { passive: true });
+
+    // ================================================================
+    // CALCULATOR
+    // ================================================================
+    let calcDisplay = document.getElementById('calcDisplay');
+    let calcCurrent = '0';
+    let calcPrev = '';
+    let calcOp = '';
+    let calcReset = false;
+
+    function calcUpdate() {
+      calcDisplay.value = calcCurrent;
+    }
+
+    document.querySelectorAll('.calc-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.dataset.calc;
+        if (val === '=') {
+          if (!calcOp || !calcPrev) return;
+          const a = parseFloat(calcPrev.replace(',', '.'));
+          const b = parseFloat(calcCurrent.replace(',', '.'));
+          let r;
+          switch (calcOp) {
+            case '+': r = a + b; break;
+            case '-': r = a - b; break;
+            case '*': r = a * b; break;
+            case '/': r = b !== 0 ? a / b : 'Erro'; break;
+          }
+          calcCurrent = typeof r === 'number' ? r.toFixed(2).replace('.', ',') : r;
+          calcOp = '';
+          calcPrev = '';
+          calcReset = true;
+        } else if ('+-*/'.includes(val)) {
+          if (calcOp && !calcReset) {
+            btn.click(); return;
+          }
+          calcPrev = calcCurrent;
+          calcOp = val;
+          calcReset = true;
+        } else if (val === '.') {
+          if (calcReset) { calcCurrent = '0,'; calcReset = false; }
+          else if (!calcCurrent.includes(',')) calcCurrent += ',';
+        } else {
+          if (calcReset || calcCurrent === '0') { calcCurrent = val; calcReset = false; }
+          else calcCurrent += val;
+        }
+        calcUpdate();
+      });
+    });
+
+    calcDisplay.addEventListener('input', () => {
+      calcCurrent = calcDisplay.value.replace(/[^0-9,\-]/g, '') || '0';
+      calcDisplay.value = calcCurrent;
+    });
+
+    document.getElementById('calcClear').addEventListener('click', () => {
+      calcCurrent = '0';
+      calcPrev = '';
+      calcOp = '';
+      calcReset = false;
+      calcUpdate();
+    });
+
+    document.getElementById('calcBackspace').addEventListener('click', () => {
+      if (calcCurrent.length > 1) calcCurrent = calcCurrent.slice(0, -1);
+      else calcCurrent = '0';
+      calcUpdate();
+    });
+
+    // Notes auto-save
+    const calcNotas = document.getElementById('calcNotas');
+    calcNotas.value = localStorage.getItem('calcNotas') || '';
+    calcNotas.addEventListener('input', () => {
+      localStorage.setItem('calcNotas', calcNotas.value);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (document.getElementById('tab-calc').classList.contains('active') && document.activeElement !== calcNotas) {
+        const key = e.key;
+        const btn = document.querySelector(`.calc-btn[data-calc="${key}"]`);
+        if (btn) { btn.click(); e.preventDefault(); return; }
+        if (key === 'Enter' || key === '=') {
+          document.querySelector('.calc-btn[data-calc="="]').click();
+          e.preventDefault();
+        } else if (key === 'Escape' || key === 'c' || key === 'C') {
+          document.getElementById('calcClear').click();
+          e.preventDefault();
+        } else if (key === ',') {
+          document.querySelector('.calc-btn[data-calc="."]').click();
+          e.preventDefault();
+        } else if (key === 'Backspace') {
+          if (calcCurrent.length > 1) calcCurrent = calcCurrent.slice(0, -1);
+          else calcCurrent = '0';
+          calcUpdate();
+          e.preventDefault();
+        }
+      }
+    });
+
+    // ================================================================
+    // SAVE CONFIG
+    // ================================================================
+    $('salvarConfigBtn').addEventListener('click', () => {
+      const cfg = lerConfigForm();
+      state.config = cfg;
+      // If capitalAtual is less than the configured initial, or if first time, sync
+      if (state.capitalAtual < cfg.valorInicial && state.registros.length === 0) {
+        state.capitalAtual = cfg.valorInicial;
+      }
+      // Recalculate capitalAtual based on initial value + results
+      state.capitalAtual = cfg.valorInicial + state.registros.reduce((s, r) => s + r.resultado, 0);
+      if (state.capitalAtual < 0) state.capitalAtual = 0;
+      persistir();
+      atualizarPaginaCapital();
+      atualizarResumoDiario();
+      atualizarChartDiario();
+    });
+
+    // ================================================================
+    // MÊS / ANO
+    // ================================================================
+    function atualizarMesAno() {
+      const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+      ];
+      const d = new Date();
+      diarioMesAno.textContent = meses[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    // ================================================================
+    // LOAD FROM STORAGE
+    // ================================================================
+    function carregarDados() {
+      aplicarConfigNoForm(state.config);
+      state.capitalAtual = state.config.valorInicial + state.registros.reduce((s, r) => s + r.resultado, 0);
+      if (state.capitalAtual < 0) state.capitalAtual = 0;
+    }
+
+    // ================================================================
+    // INIT
+    // ================================================================
+    atualizarMesAno();
+    initChartDiario();
+    aplicarConfigNoForm(state.config);
+    atualizarPaginaCapital();
+    atualizarResumoDiario();
+    atualizarChartDiario();
+    renderizarRegistros();
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        reg.addEventListener('updatefound', () => {
+          const newSW = reg.installing;
+          newSW.addEventListener('statechange', () => {
+            if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+              newSW.postMessage({ action: 'skipWaiting' });
+            }
+          });
+        });
+      });
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) { refreshing = true; location.reload(); }
+      });
+    }
+  </script>
+</body>
+</html>
