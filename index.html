@@ -278,29 +278,29 @@
 
     <!-- Tabs -->
     <div class="flex border-b border-gray-800 mb-6 gap-0 sm:gap-1 overflow-x-auto">
-      <button class="tab-btn active flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="dashboard">
+      <button class="tab-btn active flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="visao">
         <span class="block sm:inline text-base sm:text-sm leading-tight">📊</span>
-        <span class="block text-[9px] sm:hidden mt-0.5">Visão Geral</span>
+        <span class="block text-[9px] sm:hidden mt-0.5">Geral</span>
         <span class="hidden sm:inline"> Visão Geral</span>
       </button>
-      <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="entradas">
-        <span class="block sm:inline text-base sm:text-sm leading-tight">💰</span>
-        <span class="block text-[9px] sm:hidden mt-0.5">Entradas</span>
-        <span class="hidden sm:inline"> Entradas</span>
+      <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="config">
+        <span class="block sm:inline text-base sm:text-sm leading-tight">⚙️</span>
+        <span class="block text-[9px] sm:hidden mt-0.5">Config</span>
+        <span class="hidden sm:inline"> Configuração</span>
       </button>
-      <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="despesas">
-        <span class="block sm:inline text-base sm:text-sm leading-tight">💳</span>
-        <span class="block text-[9px] sm:hidden mt-0.5">Despesas</span>
-        <span class="hidden sm:inline"> Despesas</span>
+      <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="projecao">
+        <span class="block sm:inline text-base sm:text-sm leading-tight">📈</span>
+        <span class="block text-[9px] sm:hidden mt-0.5">Diária</span>
+        <span class="hidden sm:inline"> Projeção Diária</span>
       </button>
-      <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="calendario">
+      <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="resumo">
         <span class="block sm:inline text-base sm:text-sm leading-tight">📅</span>
-        <span class="block text-[9px] sm:hidden mt-0.5">Calendário</span>
-        <span class="hidden sm:inline"> Calendário</span>
+        <span class="block text-[9px] sm:hidden mt-0.5">Mês</span>
+        <span class="hidden sm:inline"> Resumo do Mês</span>
       </button>
       <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="calc">
         <span class="block sm:inline text-base sm:text-sm leading-tight">🔢</span>
-        <span class="block text-[9px] sm:hidden mt-0.5">Calculadora</span>
+        <span class="block text-[9px] sm:hidden mt-0.5">Calc</span>
         <span class="hidden sm:inline"> Calculadora</span>
       </button>
     </div>
@@ -308,7 +308,7 @@
     <!-- ================================================================ -->
     <!-- TAB 1: VISÃO GERAL (resumo do mês + gráfico) -->
     <!-- ================================================================ -->
-    <div id="tab-dashboard" class="tab-content active">
+    <div id="tab-visao" class="tab-content active">
       <h2 class="text-sm font-bold text-slate-50 mb-4 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#55E088" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Resumo do Mês</h2>
       <div style="background:#0D0D0D;border:1px solid #334155;border-radius:1rem;padding:1rem 1.25rem;" class="mb-5">
         <div class="grid grid-cols-3 gap-3 sm:gap-4 text-center">
@@ -367,7 +367,7 @@
     <!-- ================================================================ -->
     <!-- TAB 2: CONFIGURAÇÃO DO CAPITAL (config + valores) -->
     <!-- ================================================================ -->
-    <div id="tab-entradas" class="tab-content">
+    <div id="tab-config" class="tab-content">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
           <h2 class="text-sm font-bold text-slate-50 mb-4">Projeção e Status</h2>
@@ -431,7 +431,7 @@
     <!-- ================================================================ -->
     <!-- TAB 3: PROJEÇÃO DIÁRIA (resumo + adicionar dia) -->
     <!-- ================================================================ -->
-    <div id="tab-despesas" class="tab-content">
+    <div id="tab-projecao" class="tab-content">
       <div style="background:#0D0D0D;border:1px solid #334155;border-radius:1rem;padding:1rem 1.25rem;" class="mb-5">
         <div class="grid grid-cols-3 gap-3 sm:gap-4 text-center">
           <div>
@@ -488,7 +488,7 @@
     <!-- ================================================================ -->
     <!-- TAB 4: RESUMO DO MÊS (calendário + histórico) -->
     <!-- ================================================================ -->
-    <div id="tab-calendario" class="tab-content">
+    <div id="tab-resumo" class="tab-content">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2">
           <div class="card">
@@ -1239,12 +1239,12 @@
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-        if (btn.dataset.tab === 'despesas') {
+        if (btn.dataset.tab === 'projecao') {
           atualizarMesAno();
           atualizarProjecaoDiaria();
           renderizarRegistros();
         }
-        if (btn.dataset.tab === 'calendario') {
+        if (btn.dataset.tab === 'resumo') {
           renderizarCalendario();
         }
         if (chartDiario) {
