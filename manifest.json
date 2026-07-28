@@ -4,8 +4,8 @@
   "description": "Dashboard de gerenciamento de capital e acompanhamento diário de trades",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#0D0D0D",
-  "theme_color": "#0D0D0D",
+  "background_color": "#F8FAFC",
+  "theme_color": "#F8FAFC",
   "icons": [
     {
       "src": "icon-192.png",
