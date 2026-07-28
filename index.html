@@ -280,26 +280,18 @@
     <div id="tab-visao" class="tab-content active">
       <h2 class="text-sm font-bold text-slate-50 mb-4 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#55E088" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Resumo do Mês</h2>
       <div style="background:#0D0D0D;border:1px solid #334155;border-radius:1rem;padding:1rem 1.25rem;" class="mb-5">
-        <div class="grid grid-cols-5 gap-1 sm:gap-4 text-center">
+        <div class="grid grid-cols-3 gap-3 sm:gap-4 text-center">
           <div>
-            <span class="stat-label"><span class="sm:hidden">Inicial</span><span class="hidden sm:inline">Capital Inicial</span></span>
-            <div class="text-[11px] sm:text-xl font-bold text-slate-50 mt-0.5" id="visaoCapitalInicial">R$ 1.000,00</div>
+            <span class="stat-label">Capital Inicial</span>
+            <div class="text-lg sm:text-xl font-bold text-slate-50 mt-0.5" id="visaoCapitalInicial">R$ 1.000,00</div>
           </div>
           <div>
-            <span class="stat-label"><span class="sm:hidden">Atual</span><span class="hidden sm:inline">Capital Atual</span></span>
-            <div class="text-[11px] sm:text-xl font-bold text-slate-50 mt-0.5" id="visaoCapitalAtual">R$ 1.000,00</div>
+            <span class="stat-label">Capital Atual</span>
+            <div class="text-lg sm:text-xl font-bold text-slate-50 mt-0.5" id="visaoCapitalAtual">R$ 1.000,00</div>
           </div>
           <div>
-            <span class="stat-label"><span class="sm:hidden">Placar</span><span class="hidden sm:inline">Placar Geral</span></span>
-            <div class="text-[11px] sm:text-xl font-bold mt-0.5" id="visaoPlacar"><span class="text-profit">0</span> x <span class="text-red-500">0</span></div>
-          </div>
-          <div>
-            <span class="stat-label"><span class="sm:hidden">Win Rate</span><span class="hidden sm:inline">Win Rate</span></span>
-            <div class="text-[11px] sm:text-xl font-bold mt-0.5" id="visaoWinRate">0,0%</div>
-          </div>
-          <div>
-            <span class="stat-label"><span class="sm:hidden">Ops</span><span class="hidden sm:inline">Total de Operações</span></span>
-            <div class="text-[11px] sm:text-xl font-bold text-slate-50 mt-0.5" id="visaoTotalOps">0</div>
+            <span class="stat-label">Variação</span>
+            <div class="text-lg sm:text-xl font-bold mt-0.5" id="visaoVariacao">+0,0%</div>
           </div>
         </div>
       </div>
@@ -313,6 +305,22 @@
         </div>
         <div class="relative h-48 sm:h-80">
           <canvas id="chartDiario"></canvas>
+        </div>
+      </div>
+      <div style="background:#0D0D0D;border:1px solid #334155;border-radius:1rem;padding:1rem 1.25rem;" class="mt-5">
+        <div class="grid grid-cols-3 gap-3 sm:gap-4 text-center">
+          <div>
+            <span class="stat-label">Placar Geral</span>
+            <div class="text-lg sm:text-xl font-bold mt-0.5" id="visaoPlacar"><span class="text-profit">0</span> x <span class="text-red-500">0</span></div>
+          </div>
+          <div>
+            <span class="stat-label">Total de Operações</span>
+            <div class="text-lg sm:text-xl font-bold text-slate-50 mt-0.5" id="visaoTotalOps">0</div>
+          </div>
+          <div>
+            <span class="stat-label">Win Rate</span>
+            <div class="text-lg sm:text-xl font-bold mt-0.5" id="visaoWinRate">0,0%</div>
+          </div>
         </div>
       </div>
     </div>
@@ -921,8 +929,14 @@
     // ================================================================
 
     function atualizarResumoDiario() {
-      visaoCapitalInicial.textContent = fmtB(state.config.valorInicial);
-      visaoCapitalAtual.textContent = fmtB(state.capitalAtual);
+      const capitalInicial = state.config.valorInicial;
+      const capitalAtual = state.capitalAtual;
+      const variacao = capitalInicial > 0 ? ((capitalAtual - capitalInicial) / capitalInicial) * 100 : 0;
+      visaoCapitalInicial.textContent = fmtB(capitalInicial);
+      visaoCapitalAtual.textContent = fmtB(capitalAtual);
+      const elVariacao = document.getElementById('visaoVariacao');
+      elVariacao.textContent = (variacao >= 0 ? '+' : '') + variacao.toFixed(1) + '%';
+      elVariacao.style.color = variacao >= 0 ? '#55E088' : '#F20C0C';
       let totalWins = 0, totalLosses = 0;
       for (const r of state.registros) {
         totalWins += r.acertos;
