@@ -314,7 +314,7 @@
           </div>
           <div class="flex items-center gap-3 text-[11px] font-semibold flex-shrink-0">
             <span style="color:#97A6BA">Início <span id="chartLabelInicio" style="color:#97A6BA">R$ 1.000,00</span></span>
-            <span style="color:#97A6BA">Atual <span id="chartLabelAtual" style="color:#97A6BA">R$ 1.000,00</span></span>
+            <span id="chartLabelAtualWrapper" style="color:#97A6BA">Atual <span id="chartLabelAtual" style="color:#97A6BA">R$ 1.000,00</span></span>
           </div>
         </div>
         <div class="relative h-48 sm:h-80">
@@ -890,7 +890,9 @@
       document.getElementById('chartLabelInicio').textContent = fmtB(state.config.valorInicial);
       const lblAtual = document.getElementById('chartLabelAtual');
       lblAtual.textContent = fmtB(total);
-      lblAtual.style.color = total < state.config.valorInicial ? '#F20C0C' : '#55E088';
+      const corAtual = total < state.config.valorInicial ? '#F20C0C' : '#55E088';
+      lblAtual.style.color = corAtual;
+      document.getElementById('chartLabelAtualWrapper').style.color = corAtual;
     }
 
     // ================================================================
