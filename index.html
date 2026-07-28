@@ -400,16 +400,16 @@
       <div style="background:#0D0D0D;border:1px solid #334155;border-radius:1rem;padding:1rem 1.25rem;" class="mb-5">
         <div class="grid grid-cols-3 gap-3 sm:gap-4 text-center">
           <div>
-            <span class="stat-label"><span class="sm:hidden">Capital</span><span class="hidden sm:inline">Capital Atual</span></span>
-            <div class="text-base sm:text-xl font-bold text-slate-50 mt-0.5">R$ 1.000,00</div>
+            <span class="stat-label">Placar</span>
+            <div class="text-lg sm:text-xl font-bold mt-0.5" id="projecaoPlacar"><span class="text-profit">0</span> x <span class="text-red-500">0</span></div>
           </div>
           <div>
-            <span class="stat-label"><span class="sm:hidden">Placar</span><span class="hidden sm:inline">Placar Geral</span></span>
-            <div class="text-base sm:text-xl font-bold mt-0.5" id="projecaoPlacar"><span class="text-profit">0</span> x <span class="text-red-500">0</span></div>
+            <span class="stat-label">Operações</span>
+            <div class="text-lg sm:text-xl font-bold text-slate-50 mt-0.5" id="projecaoTotalOps">0</div>
           </div>
           <div>
-            <span class="stat-label"><span class="sm:hidden">Operações</span><span class="hidden sm:inline">Total de Operações</span></span>
-            <div class="text-base sm:text-xl font-bold text-slate-50 mt-0.5">0</div>
+            <span class="stat-label">Win Rate</span>
+            <div class="text-lg sm:text-xl font-bold mt-0.5" id="projecaoWinRate">0,0%</div>
           </div>
         </div>
       </div>
@@ -944,10 +944,16 @@
       }
       const totalTrades = totalWins + totalLosses;
       const winRate = totalTrades > 0 ? (totalWins / totalTrades) * 100 : 0;
-      visaoPlacar.innerHTML = '<span class="text-profit">' + totalWins + '</span> x <span class="text-red-500">' + totalLosses + '</span>';
+      const placarHtml = '<span class="text-profit">' + totalWins + '</span> x <span class="text-red-500">' + totalLosses + '</span>';
+      visaoPlacar.innerHTML = placarHtml;
+      document.getElementById('projecaoPlacar').innerHTML = placarHtml;
       visaoWinRate.textContent = winRate.toFixed(1) + '%';
       visaoWinRate.style.color = winRate >= 50 ? '#55E088' : '#F20C0C';
+      const wrColor = winRate >= 50 ? '#55E088' : '#F20C0C';
+      document.getElementById('projecaoWinRate').textContent = winRate.toFixed(1) + '%';
+      document.getElementById('projecaoWinRate').style.color = wrColor;
       visaoTotalOps.textContent = totalTrades;
+      document.getElementById('projecaoTotalOps').textContent = totalTrades;
     }
 
     function renderizarRegistros() {
