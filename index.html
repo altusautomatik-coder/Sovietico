@@ -684,6 +684,7 @@
           const data = doc.data();
           if (data.config) state.config = data.config;
           if (data.registros) state.registros = data.registros;
+          carregarDados();
           state.capitalAtual = state.config.valorInicial + state.registros.reduce((s, r) => s + r.resultado, 0);
           if (state.capitalAtual < 0) state.capitalAtual = 0;
           localStorage.setItem('capitalPro', JSON.stringify(state));
@@ -773,6 +774,7 @@
 
     const state = carregarState();
     if (state.capitalAtual === null) state.capitalAtual = state.config.valorInicial;
+    carregarDados();
 
     function persistir() {
       localStorage.setItem('capitalPro', JSON.stringify(state));
