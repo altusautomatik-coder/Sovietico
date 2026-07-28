@@ -826,8 +826,8 @@
         if (!ds) return;
         ctx.save();
         const grad = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-        grad.addColorStop(0, 'rgba(85, 224, 136, 0.25)');
-        grad.addColorStop(0.5, 'rgba(85, 224, 136, 0.08)');
+        grad.addColorStop(0, 'rgba(85, 224, 136, 0.15)');
+        grad.addColorStop(0.5, 'rgba(85, 224, 136, 0.05)');
         grad.addColorStop(1, 'rgba(85, 224, 136, 0)');
         ds.backgroundColor = grad;
         ctx.restore();
@@ -853,12 +853,13 @@
             data: [],
             borderColor: '#55E088',
             backgroundColor: 'transparent',
-            borderWidth: 2.5,
-            pointRadius: 3,
-            pointBackgroundColor: '#55E088',
-            pointBorderColor: '#0D0D0D',
-            pointBorderWidth: 1.5,
-            pointHitRadius: 10,
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: '#55E088',
+            pointHoverBorderColor: '#0D0D0D',
+            pointHoverBorderWidth: 2,
+            pointHitRadius: 12,
             cubicInterpolationMode: 'monotone',
             tension: 0.4,
             fill: true,
