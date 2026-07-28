@@ -307,20 +307,24 @@
         </div>
       </div>
       <div class="card chart-card">
-        <div class="flex items-center justify-between mb-4 gap-3">
-          <div class="flex items-center gap-2 min-w-0">
-            <svg id="chartTitleIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#55E088" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-            <h2 class="text-sm font-bold text-slate-50 whitespace-nowrap">Evolução da Banca</h2>
+          <div class="flex items-center justify-between mb-4 gap-3">
+            <div class="flex items-center gap-2 min-w-0">
+              <svg id="chartTitleIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#55E088" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              <h2 class="text-sm font-bold text-slate-50 whitespace-nowrap">Evolução da Banca</h2>
+            </div>
+            <div class="flex items-center gap-2 text-[11px] font-semibold flex-shrink-0">
+              <span style="color:#97A6BA">Início <span id="chartLabelInicio" style="color:#97A6BA">R$ 1.000,00</span></span>
+              <span id="chartLabelAtualWrapper" style="color:#97A6BA">Atual <span id="chartLabelAtual" style="color:#97A6BA">R$ 1.000,00</span></span>
+            </div>
           </div>
-          <div class="flex items-center gap-2 text-[11px] font-semibold flex-shrink-0">
-            <span style="color:#97A6BA">Início <span id="chartLabelInicio" style="color:#97A6BA">R$ 1.000,00</span></span>
-            <span id="chartLabelAtualWrapper" style="color:#97A6BA">Atual <span id="chartLabelAtual" style="color:#97A6BA">R$ 1.000,00</span></span>
-            <span id="chartPercentBadge" class="px-1.5 py-0.5 rounded text-[10px] font-bold" style="display:none"></span>
+          <div class="flex items-center gap-2 mb-3 text-[11px] font-semibold px-1">
+            <span class="w-3 h-3 rounded-sm" style="background:#55E088;display:inline-block"></span>
+            <span style="color:#94A3B8">Resultado (R$)</span>
+            <span id="chartPercentBadge" style="display:none"></span>
           </div>
-        </div>
-        <div class="relative h-48 sm:h-80">
-          <canvas id="chartDiario"></canvas>
-        </div>
+          <div class="relative h-48 sm:h-80">
+            <canvas id="chartDiario"></canvas>
+          </div>
       </div>
       <div style="background:#0D0D0D;border:1px solid #334155;border-radius:1rem;padding:1rem 1.25rem;" class="mt-5">
         <div class="grid grid-cols-3 gap-3 sm:gap-4 text-center">
@@ -857,15 +861,7 @@
           maintainAspectRatio: false,
           interaction: { intersect: false, mode: 'index' },
           plugins: {
-            legend: {
-              labels: {
-                color: '#94A3B8',
-                font: { size: 12, weight: '700' },
-                boxWidth: 12,
-                boxHeight: 12,
-                padding: 12,
-              },
-            },
+            legend: { display: false },
             tooltip: {
               backgroundColor: '#0D0D0D',
               titleColor: '#e2e8f0',
@@ -917,19 +913,21 @@
       document.getElementById('chartLabelAtualWrapper').style.color = corAtual;
 
       const icone = document.getElementById('chartTitleIcon');
-      const badge = document.getElementById('chartPercentBadge');
+      const pct = state.config.valorInicial > 0 ? ((total - state.config.valorInicial) / state.config.valorInicial) * 100 : 0;
       if (total >= state.config.valorInicial) {
         icone.innerHTML = '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>';
         icone.style.stroke = '#55E088';
-        const pct = state.config.valorInicial > 0 ? ((total - state.config.valorInicial) / state.config.valorInicial) * 100 : 0;
-        badge.textContent = '+' + pct.toFixed(1) + '%';
-        badge.style.cssText = 'background:rgba(85,224,136,0.15);color:#55E088;display:inline;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700';
       } else {
         icone.innerHTML = '<polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>';
         icone.style.stroke = '#F20C0C';
-        const pct = state.config.valorInicial > 0 ? ((total - state.config.valorInicial) / state.config.valorInicial) * 100 : 0;
+      }
+      const badge = document.getElementById('chartPercentBadge');
+      if (pct >= 0) {
+        badge.textContent = '+' + pct.toFixed(1) + '%';
+        badge.style.cssText = 'background:rgba(85,224,136,0.15);color:#55E088;display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;margin-left:4px';
+      } else {
         badge.textContent = pct.toFixed(1) + '%';
-        badge.style.cssText = 'background:rgba(242,12,12,0.15);color:#F20C0C;display:inline;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700';
+        badge.style.cssText = 'background:rgba(242,12,12,0.15);color:#F20C0C;display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;margin-left:4px';
       }
     }
 
