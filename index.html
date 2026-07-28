@@ -904,29 +904,18 @@
 
     function atualizarChartDiario() {
       if (!chartDiario) return;
-      const regPorDia = {};
-      let ultimoDia = 0;
-      for (const r of state.registros) {
-        regPorDia[r.dia] = r;
-        if (r.dia > ultimoDia) ultimoDia = r.dia;
-      }
+      const sorted = [...state.registros].sort((a, b) => a.dia - b.dia);
       const labels = [];
       const data = [];
       const cores = [];
       const capitalData = [];
       let capital = state.config.valorInicial;
-      for (let d = 1; d <= 31; d++) {
-        labels.push('Dia ' + d);
-        const r = regPorDia[d];
-        const val = r ? r.resultado : 0;
-        data.push(val);
-        cores.push(r ? (val >= 0 ? '#55E088' : '#F20C0C') : 'rgba(0,0,0,0)');
-        if (d <= ultimoDia) {
-          capital += val;
-          capitalData.push(capital);
-        } else {
-          capitalData.push(null);
-        }
+      for (const r of sorted) {
+        labels.push('Dia ' + r.dia);
+        data.push(r.resultado);
+        cores.push(r.resultado >= 0 ? '#55E088' : '#F20C0C');
+        capital += r.resultado;
+        capitalData.push(capital);
       }
       chartDiario.data.labels = labels;
       chartDiario.data.datasets[0].data = data;
