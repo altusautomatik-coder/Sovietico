@@ -817,23 +817,6 @@
     // ================================================================
     let chartDiario = null;
 
-    const gradientPlugin = {
-      id: 'gradientFill',
-      beforeDraw(chart) {
-        const { ctx, chartArea } = chart;
-        if (!chartArea) return;
-        const ds = chart.data.datasets[1];
-        if (!ds) return;
-        ctx.save();
-        const grad = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-        grad.addColorStop(0, 'rgba(85, 224, 136, 0.15)');
-        grad.addColorStop(0.5, 'rgba(85, 224, 136, 0.05)');
-        grad.addColorStop(1, 'rgba(85, 224, 136, 0)');
-        ds.backgroundColor = grad;
-        ctx.restore();
-      }
-    };
-
     function initChartDiario() {
       const ctx = document.getElementById('chartDiario').getContext('2d');
       chartDiario = new Chart(ctx, {
@@ -846,26 +829,6 @@
             backgroundColor: [],
             borderRadius: 4,
             borderSkipped: false,
-            order: 2,
-          }, {
-            label: ' Capital',
-            type: 'line',
-            data: [],
-            borderColor: '#55E088',
-            backgroundColor: 'transparent',
-            borderWidth: 2,
-            pointRadius: 0,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: '#55E088',
-            pointHoverBorderColor: '#0D0D0D',
-            pointHoverBorderWidth: 2,
-            pointHitRadius: 12,
-            cubicInterpolationMode: 'monotone',
-            tension: 0.4,
-            fill: true,
-            yAxisID: 'y1',
-            spanGaps: false,
-            order: 1,
           }]
         },
         options: {
@@ -873,7 +836,15 @@
           maintainAspectRatio: false,
           interaction: { intersect: false, mode: 'index' },
           plugins: {
-            legend: { display: false },
+            legend: {
+              labels: {
+                color: '#94A3B8',
+                font: { size: 12, weight: '700' },
+                boxWidth: 12,
+                boxHeight: 12,
+                padding: 12,
+              },
+            },
             tooltip: {
               backgroundColor: '#0D0D0D',
               titleColor: '#e2e8f0',
@@ -883,20 +854,15 @@
               padding: 10,
               displayColors: false,
               callbacks: {
-                label: (ctx) => {
-                  if (ctx.datasetIndex === 0) return 'Resultado: ' + fmtB(ctx.parsed.y);
-                  return 'Capital: ' + fmtB(ctx.parsed.y);
-                },
+                label: (ctx) => 'Resultado: ' + fmtB(ctx.parsed.y),
               },
             }
           },
           scales: {
             x: { offset: true, ticks: { color: '#334155', maxTicksLimit: 10, font: { size: 11 } }, grid: { display: false } },
-            y: { position: 'left', ticks: { color: '#334155', font: { size: 10 }, maxTicksLimit: 5, callback: (v) => 'R$' + v.toFixed(0) }, grid: { color: 'rgba(51,65,85,0.2)', drawBorder: false, borderDash: [3, 5] } },
-            y1: { position: 'right', ticks: { color: '#55E088', font: { size: 10 }, maxTicksLimit: 5, callback: (v) => 'R$' + v.toFixed(0) }, grid: { display: false } }
+            y: { position: 'left', ticks: { color: '#334155', font: { size: 10 }, maxTicksLimit: 5, callback: (v) => 'R$' + v.toFixed(0) }, grid: { color: 'rgba(51,65,85,0.2)', drawBorder: false, borderDash: [3, 5] } }
           }
-        },
-        plugins: [gradientPlugin]
+        }
       });
       document.getElementById('chartLabelInicio').textContent = fmtB(state.config.valorInicial);
       document.getElementById('chartLabelAtual').textContent = fmtB(state.config.valorInicial);
@@ -908,19 +874,14 @@
       const labels = [];
       const data = [];
       const cores = [];
-      const capitalData = [];
-      let capital = state.config.valorInicial;
       for (const r of sorted) {
         labels.push('Dia ' + r.dia);
         data.push(r.resultado);
         cores.push(r.resultado >= 0 ? '#55E088' : '#F20C0C');
-        capital += r.resultado;
-        capitalData.push(capital);
       }
       chartDiario.data.labels = labels;
       chartDiario.data.datasets[0].data = data;
       chartDiario.data.datasets[0].backgroundColor = cores;
-      chartDiario.data.datasets[1].data = capitalData;
       chartDiario.update('none');
       chartDiario.resize();
 
