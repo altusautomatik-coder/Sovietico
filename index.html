@@ -309,12 +309,13 @@
       <div class="card chart-card">
         <div class="flex items-center justify-between mb-4 gap-3">
           <div class="flex items-center gap-2 min-w-0">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#55E088" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            <svg id="chartTitleIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#55E088" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
             <h2 class="text-sm font-bold text-slate-50 whitespace-nowrap">Evolução da Banca</h2>
           </div>
-          <div class="flex items-center gap-3 text-[11px] font-semibold flex-shrink-0">
+          <div class="flex items-center gap-2 text-[11px] font-semibold flex-shrink-0">
             <span style="color:#97A6BA">Início <span id="chartLabelInicio" style="color:#97A6BA">R$ 1.000,00</span></span>
             <span id="chartLabelAtualWrapper" style="color:#97A6BA">Atual <span id="chartLabelAtual" style="color:#97A6BA">R$ 1.000,00</span></span>
+            <span id="chartPercentBadge" class="px-1.5 py-0.5 rounded text-[10px] font-bold" style="display:none"></span>
           </div>
         </div>
         <div class="relative h-48 sm:h-80">
@@ -817,6 +818,26 @@
     // ================================================================
     let chartDiario = null;
 
+    const zeroLinePlugin = {
+      id: 'zeroLine',
+      afterDraw(chart) {
+        const yScale = chart.scales.y;
+        if (!yScale) return;
+        const yZero = yScale.getPixelForValue(0);
+        const { left, right } = chart.chartArea;
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.moveTo(left, yZero);
+        ctx.lineTo(right, yZero);
+        ctx.stroke();
+        ctx.restore();
+      }
+    };
+
     function initChartDiario() {
       const ctx = document.getElementById('chartDiario').getContext('2d');
       chartDiario = new Chart(ctx, {
@@ -862,7 +883,8 @@
             x: { offset: true, ticks: { color: '#334155', maxTicksLimit: 10, font: { size: 11 } }, grid: { display: false } },
             y: { position: 'left', ticks: { color: '#334155', font: { size: 10 }, maxTicksLimit: 5, callback: (v) => 'R$' + v.toFixed(0) }, grid: { color: 'rgba(51,65,85,0.2)', drawBorder: false, borderDash: [3, 5] } }
           }
-        }
+        },
+        plugins: [zeroLinePlugin]
       });
       document.getElementById('chartLabelInicio').textContent = fmtB(state.config.valorInicial);
       document.getElementById('chartLabelAtual').textContent = fmtB(state.config.valorInicial);
@@ -893,6 +915,22 @@
       const corAtual = total < state.config.valorInicial ? '#F20C0C' : '#55E088';
       lblAtual.style.color = corAtual;
       document.getElementById('chartLabelAtualWrapper').style.color = corAtual;
+
+      const icone = document.getElementById('chartTitleIcon');
+      const badge = document.getElementById('chartPercentBadge');
+      if (total >= state.config.valorInicial) {
+        icone.innerHTML = '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>';
+        icone.style.stroke = '#55E088';
+        const pct = state.config.valorInicial > 0 ? ((total - state.config.valorInicial) / state.config.valorInicial) * 100 : 0;
+        badge.textContent = '+' + pct.toFixed(1) + '%';
+        badge.style.cssText = 'background:rgba(85,224,136,0.15);color:#55E088;display:inline;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700';
+      } else {
+        icone.innerHTML = '<polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>';
+        icone.style.stroke = '#F20C0C';
+        const pct = state.config.valorInicial > 0 ? ((total - state.config.valorInicial) / state.config.valorInicial) * 100 : 0;
+        badge.textContent = pct.toFixed(1) + '%';
+        badge.style.cssText = 'background:rgba(242,12,12,0.15);color:#F20C0C;display:inline;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700';
+      }
     }
 
     // ================================================================
