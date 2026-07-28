@@ -320,7 +320,6 @@
           <div class="flex items-center gap-2 mb-3 text-[11px] font-semibold px-1">
             <span style="color:#94A3B8">Resultado (R$)</span>
             <span id="chartPercentBadge" style="display:none"></span>
-            <span id="chartCapitalLabel" style="color:#F59E0B;font-weight:600;display:none">Capital</span>
           </div>
           <div class="relative h-48 sm:h-80">
             <canvas id="chartDiario"></canvas>
@@ -854,21 +853,6 @@
             backgroundColor: [],
             borderRadius: 4,
             borderSkipped: false,
-            order: 2,
-          }, {
-            label: ' Capital',
-            type: 'line',
-            data: [],
-            borderColor: '#F59E0B',
-            backgroundColor: 'transparent',
-            borderWidth: 2,
-            pointRadius: 0,
-            pointHitRadius: 10,
-            cubicInterpolationMode: 'monotone',
-            tension: 0.4,
-            fill: false,
-            yAxisID: 'y1',
-            order: 1,
           }]
         },
         options: {
@@ -892,8 +876,7 @@
           },
           scales: {
             x: { offset: true, ticks: { color: '#334155', maxTicksLimit: 10, font: { size: 11 } }, grid: { display: false } },
-            y: { position: 'left', ticks: { color: '#334155', font: { size: 10 }, maxTicksLimit: 5, callback: (v) => 'R$' + v.toFixed(0) }, grid: { color: 'rgba(51,65,85,0.2)', drawBorder: false, borderDash: [3, 5] } },
-            y1: { position: 'right', display: false, grid: { display: false } }
+            y: { position: 'left', ticks: { color: '#334155', font: { size: 10 }, maxTicksLimit: 5, callback: (v) => 'R$' + v.toFixed(0) }, grid: { color: 'rgba(51,65,85,0.2)', drawBorder: false, borderDash: [3, 5] } }
           }
         },
         plugins: [zeroLinePlugin]
@@ -913,16 +896,9 @@
         data.push(r.resultado);
         cores.push(r.resultado >= 0 ? '#55E088' : '#F20C0C');
       }
-      const capitalLine = [];
-      let acc = state.config.valorInicial;
-      for (let i = 0; i < data.length; i++) {
-        acc += data[i];
-        capitalLine.push(acc);
-      }
       chartDiario.data.labels = labels;
       chartDiario.data.datasets[0].data = data;
       chartDiario.data.datasets[0].backgroundColor = cores;
-      chartDiario.data.datasets[1].data = capitalLine;
       chartDiario.update('none');
       chartDiario.resize();
 
@@ -952,7 +928,7 @@
         badge.textContent = pct.toFixed(1) + '%';
         badge.style.cssText = 'background:rgba(242,12,12,0.15);color:#F20C0C;display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;margin-left:4px';
       }
-      document.getElementById('chartCapitalLabel').style.display = data.length >= 1 ? 'inline' : 'none';
+
     }
 
     // ================================================================
