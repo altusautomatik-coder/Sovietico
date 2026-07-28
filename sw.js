@@ -1,4 +1,4 @@
-const CACHE = 'gestao-sov-v5';
+const CACHE = 'gestao-sov-v6';
 const URLS = ['manifest.json', 'icongestao.ico', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', (e) => {
