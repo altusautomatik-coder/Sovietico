@@ -913,8 +913,9 @@
       }
       const sma = [];
       for (let i = 0; i < data.length; i++) {
-        if (i < 2) { sma.push(null); continue; }
-        sma.push((data[i] + data[i - 1] + data[i - 2]) / 3);
+        if (i === 0) sma.push(data[0]);
+        else if (i === 1) sma.push((data[0] + data[1]) / 2);
+        else sma.push((data[i] + data[i - 1] + data[i - 2]) / 3);
       }
       chartDiario.data.labels = labels;
       chartDiario.data.datasets[0].data = data;
@@ -949,12 +950,7 @@
         badge.textContent = pct.toFixed(1) + '%';
         badge.style.cssText = 'background:rgba(242,12,12,0.15);color:#F20C0C;display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;margin-left:4px';
       }
-      const smaLabel = document.getElementById('chartSmaLabel');
-      if (data.length >= 3) {
-        smaLabel.style.display = 'inline';
-      } else {
-        smaLabel.style.display = 'none';
-      }
+      document.getElementById('chartSmaLabel').style.display = data.length >= 1 ? 'inline' : 'none';
     }
 
     // ================================================================
