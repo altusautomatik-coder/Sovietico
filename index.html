@@ -103,6 +103,9 @@
     .btn-primary:hover { background: #0F6B30; }
     .btn-primary:active { transform: scale(0.97); }
     .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-danger { background: #8C0712; color: #f8fafc; border: 1px solid #8C0712; font-weight: 700; padding: 0.65rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; transition: opacity 0.2s, transform 0.1s; }
+    .btn-danger:hover { background: #A60A0A; }
+    .btn-danger:active { transform: scale(0.97); }
     .stat-label { font-size: 0.7rem; letter-spacing: 0.04em; color: #94A3B8; font-weight: 600; }
     .stat-card {
       background: #0D0D0D;
@@ -136,6 +139,22 @@
       font-weight: 700; font-size: 0.85rem; color: #94A3B8;
       flex-shrink: 0;
     }
+    .cal-dia { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; cursor: pointer; font-size: 0.82rem; font-weight: 500; transition: background 0.15s, border-color 0.15s; border: 1px solid transparent; color: #e2e8f0; background: transparent; position: relative; user-select: none; }
+    .cal-dia:hover { background: #1E293B; border-color: #334155; }
+    .cal-dia.other-month { color: #475569; }
+    .cal-dia.today { border-color: #8C0712; font-weight: 700; }
+    .cal-dia.selected { background: #8C0712; border-color: #8C0712; color: #fff; font-weight: 700; }
+    .cal-dia.has-registro::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; border-radius: 50%; background: #55E088; }
+    .cal-dia.has-registro.negative::after { background: #F20C0C; }
+    .cal-dia.selected.has-registro::after { background: #fff; }
+    body.light-mode .cal-dia { color: #2F2F2F; }
+    body.light-mode .cal-dia:hover { background: #e5e0d8; border-color: #d8d4cc; }
+    body.light-mode .cal-dia.other-month { color: #b0a99a; }
+    body.light-mode .cal-dia.today { border-color: #8C0712; }
+    body.light-mode .cal-dia.selected { background: #8C0712; border-color: #8C0712; color: #fff; }
+    body.light-mode .cal-dia.has-registro::after { background: #12823B; }
+    body.light-mode .cal-dia.has-registro.negative::after { background: #F20C0C; }
+    body.light-mode .cal-dia.selected.has-registro::after { background: #fff; }
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0D0D0D; }
@@ -144,13 +163,6 @@
     .animate-slide-in { animation: slide-in 0.25s ease-out; }
     .calc-btn:active { transform: scale(0.94); }
     .calc-btn:hover { filter: brightness(1.15); }
-    .cal-dia { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; cursor: pointer; font-size: 0.82rem; font-weight: 500; transition: background 0.15s, border-color 0.15s; border: 1px solid transparent; color: #e2e8f0; background: transparent; position: relative; user-select: none; }
-    .cal-dia:hover { background: #1E293B; border-color: #334155; }
-    .cal-dia.other-month { color: #475569; }
-    .cal-dia.today { border-color: #8C0712; font-weight: 700; }
-    .cal-dia.selected { background: #8C0712; border-color: #8C0712; color: #fff; font-weight: 700; }
-    .cal-dia.has-gasto::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; border-radius: 50%; background: #55E088; }
-    .cal-dia.selected.has-gasto::after { background: #fff; }
     @media (max-width: 768px) {
       .card, .card-green { padding: 1rem; }
       .stat-card { padding: 0.75rem 1rem; }
@@ -190,13 +202,6 @@
     body.light-mode .day-card { background: #fafaf8; border-color: #d8d4cc; }
     body.light-mode .day-card:hover { border-color: #bfb9ae; }
     body.light-mode .day-num { background: #fafaf8; border-color: #d8d4cc; color: #2F2F2F; }
-    body.light-mode .cal-dia { color: #2F2F2F; }
-    body.light-mode .cal-dia:hover { background: #e5e0d8; border-color: #d8d4cc; }
-    body.light-mode .cal-dia.other-month { color: #b0a99a; }
-    body.light-mode .cal-dia.today { border-color: #8C0712; }
-    body.light-mode .cal-dia.selected { background: #8C0712; border-color: #8C0712; color: #fff; }
-    body.light-mode .cal-dia.has-gasto::after { background: #12823B; }
-    body.light-mode .cal-dia.selected.has-gasto::after { background: #fff; }
     body.light-mode #toastContainer > div { background: #fafaf8 !important; border-color: #d8d4cc !important; color: #2F2F2F !important; }
     body.light-mode #confirmModal > div { background: #fafaf8; border-color: #d8d4cc; }
     body.light-mode #confirmModal p { color: #2F2F2F; }
@@ -415,7 +420,7 @@
       </div>
       <div class="card">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-sm font-bold text-slate-50">Adicionar Dia</h2>
+          <h2 class="text-sm font-bold text-slate-50" id="diarioFormTitle">Adicionar Dia</h2>
           <span class="text-xs text-gray-600 font-medium" id="diarioMesAno"></span>
         </div>
         <div class="flex flex-wrap items-end gap-3 mb-5 p-4 rounded-lg bg-[#0D0D0D] border border-[#334155]">
@@ -436,6 +441,7 @@
             <input type="text" id="novoResultado" value="" inputmode="decimal" placeholder="ex: 120,00" />
           </div>
           <button class="btn-primary h-[42px]" id="adicionarDiaBtn">Adicionar Dia</button>
+          <button class="btn-danger h-[42px]" id="cancelarDiaBtn" style="display:none">Cancelar</button>
         </div>
         <div id="diarioLista"></div>
       </div>
@@ -469,20 +475,25 @@
             <div id="calGrid" class="grid grid-cols-7 gap-1"></div>
           </div>
         </div>
-        <div class="lg:col-span-1">
+        <div class="lg:col-span-1 space-y-4">
           <div class="card">
             <h2 class="text-sm font-bold text-slate-50 mb-4">Resumo</h2>
             <div class="space-y-3">
               <div><span class="stat-label">Capital</span><div class="text-base font-bold text-slate-50" id="resumoCapital">R$ 1.000,00</div></div>
               <div><span class="stat-label">Placar</span><div class="text-base font-bold" id="resumoPlacar"><span class="text-profit">0</span> x <span class="text-red-500">0</span></div></div>
-              <div><span class="stat-label">Operações</span><div class="text-base font-bold text-slate-50">0</div></div>
+              <div><span class="stat-label">Operações</span><div class="text-base font-bold text-slate-50" id="resumoOperacoes">0</div></div>
+            </div>
+          </div>
+          <div class="card" id="calDetalhes">
+            <h2 class="text-sm font-bold text-slate-50 mb-4" id="calDiaLabel">Selecione um dia</h2>
+            <div id="calSemDia">
+              <p class="text-xs text-[#94A3B8]">Clique em um dia no calendário para ver os detalhes.</p>
+            </div>
+            <div id="calComDia" style="display:none">
+              <div class="space-y-2" id="calDiaInfo"></div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="card mt-6">
-        <h2 class="text-sm font-bold text-slate-50 mb-4">Histórico de Dias</h2>
-        <div id="calHistoricoLista" class="space-y-2"></div>
       </div>
     </div>
 
@@ -521,6 +532,8 @@
       <div class="card mx-3 sm:mx-auto mb-4 sm:max-w-sm">
         <h2 class="text-sm font-bold text-slate-50 mb-3 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Anotações</h2>
       <textarea id="calcNotas" class="w-full rounded-lg text-sm text-[#e2e8f0] placeholder-[#94A3B8] resize-none" style="background:#0D0D0D;border:1px solid #334155;padding:0.75rem;min-height:100px;outline:none" placeholder="Escreva suas anotações aqui..."></textarea>
+      <button id="salvarNotasBtn" class="btn-primary w-full mt-3">Salvar Anotações</button>
+      <div id="calcNotasLista" class="mt-4 space-y-2"></div>
     </div>
   </div>
   </div>
@@ -695,6 +708,7 @@
         atualizarResumoDiario();
         atualizarChartDiario();
         renderizarRegistros();
+        renderizarCalendario();
         await carregarFirestore();
         if (state.registros.length > 0) {
           persistir();
@@ -703,6 +717,7 @@
           atualizarResumoDiario();
           atualizarChartDiario();
           renderizarRegistros();
+          renderizarCalendario();
         }
       } else {
         mostrarApp(false);
@@ -831,7 +846,7 @@
               padding: 10,
               displayColors: false,
               callbacks: {
-                label: (ctx) => 'R$ ' + Math.abs(ctx.parsed.y).toFixed(2).replace('.', ','),
+                label: (ctx) => fmtB(ctx.parsed.y),
               },
             }
           },
@@ -897,7 +912,7 @@
       const capitalInicial = cfg.valorInicial;
       const capitalAtual = state.capitalAtual;
       const variacao = capitalInicial > 0 ? ((capitalAtual - capitalInicial) / capitalInicial) * 100 : 0;
-      const metaValor = capitalAtual * (cfg.metaLucro / 100);
+      const metaValor = capitalInicial * (cfg.metaLucro / 100);
       const stopWinValor = capitalAtual * (cfg.stopWin / 100);
       const stopLossValor = capitalAtual * (cfg.stopLoss / 100);
       const valorTrade = capitalAtual * (cfg.porcTrade / 100);
@@ -976,12 +991,20 @@
                 <span class="text-sm font-semibold ${cor}">${fmt(r.resultado)}</span>
               </div>
             </div>
-            <button class="delete-btn" data-dia="${r.dia}" title="Excluir dia" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;transition:background 0.2s;flex-shrink:0;margin-right:-4px;" onmouseover="this.style.background='#590707'" onmouseout="this.style.background='transparent'">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F20C0C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              </svg>
-            </button>
+            <div class="flex gap-1 items-center">
+              <button class="edit-btn" data-dia="${r.dia}" title="Editar dia" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;transition:background 0.2s;flex-shrink:0;" onmouseover="this.style.background='#1E293B'" onmouseout="this.style.background='transparent'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+              <button class="delete-btn" data-dia="${r.dia}" title="Excluir dia" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;transition:background 0.2s;flex-shrink:0;" onmouseover="this.style.background='#590707'" onmouseout="this.style.background='transparent'">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F20C0C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
           </div>`;
       }
       html += '</div>';
@@ -995,6 +1018,33 @@
       const resultado = parseVal(novoResultado.value);
 
       if (!dia || dia < 1 || dia > 31) { mostrarToast('Informe um dia válido (1-31).', 'aviso'); return; }
+
+      if (diaEditandoId) {
+        const idx = state.registros.findIndex(r => r.dia === diaEditandoId);
+        if (idx === -1) return;
+        const antigo = state.registros[idx];
+        state.capitalAtual -= antigo.resultado;
+        state.registros[idx] = { dia, acertos, erros, resultado };
+        state.capitalAtual += resultado;
+        if (state.capitalAtual < 0) state.capitalAtual = 0;
+        persistir();
+        diaEditandoId = null;
+        document.getElementById('diarioFormTitle').textContent = 'Adicionar Dia';
+        document.getElementById('adicionarDiaBtn').textContent = 'Adicionar Dia';
+        document.getElementById('cancelarDiaBtn').style.display = 'none';
+        atualizarResumoDiario();
+        atualizarChartDiario();
+        renderizarRegistros();
+        atualizarPaginaCapital();
+        renderizarCalendario();
+        mostrarToast('Dia ' + dia + ' atualizado!', 'sucesso');
+        novoDia.value = '';
+        novoAcertos.value = '0';
+        novoErros.value = '0';
+        novoResultado.value = '0';
+        return;
+      }
+
       if (state.registros.some(r => r.dia === dia)) { mostrarToast('Dia ' + dia + ' já registrado.', 'erro'); return; }
 
       state.registros.push({ dia, acertos, erros, resultado });
@@ -1006,11 +1056,13 @@
       atualizarChartDiario();
       renderizarRegistros();
       atualizarPaginaCapital();
+      renderizarCalendario();
 
       novoDia.value = '';
       novoAcertos.value = '0';
       novoErros.value = '0';
       novoResultado.value = '0';
+      mostrarToast('Dia ' + dia + ' adicionado!', 'sucesso');
     }
 
     async function deletarRegistro(dia) {
@@ -1025,11 +1077,40 @@
       atualizarChartDiario();
       renderizarRegistros();
       atualizarPaginaCapital();
+      renderizarCalendario();
+      mostrarToast('Dia ' + dia + ' removido!', 'sucesso');
     }
 
+    let diaEditandoId = null;
+
     diarioLista.addEventListener('click', (e) => {
-      const btn = e.target.closest('.delete-btn');
-      if (btn) deletarRegistro(parseInt(btn.dataset.dia));
+      const deleteBtn = e.target.closest('.delete-btn');
+      if (deleteBtn) { deletarRegistro(parseInt(deleteBtn.dataset.dia)); return; }
+      const editBtn = e.target.closest('.edit-btn');
+      if (editBtn) {
+        const dia = parseInt(editBtn.dataset.dia);
+        const registro = state.registros.find(r => r.dia === dia);
+        if (!registro) return;
+        diaEditandoId = dia;
+        document.getElementById('novoDia').value = registro.dia;
+        document.getElementById('novoAcertos').value = registro.acertos;
+        document.getElementById('novoErros').value = registro.erros;
+        document.getElementById('novoResultado').value = registro.resultado.toFixed(2).replace('.', ',');
+        document.getElementById('diarioFormTitle').textContent = 'Editar Dia';
+        document.getElementById('adicionarDiaBtn').textContent = 'Salvar';
+        document.getElementById('cancelarDiaBtn').style.display = '';
+      }
+    });
+
+    document.getElementById('cancelarDiaBtn').addEventListener('click', () => {
+      diaEditandoId = null;
+      document.getElementById('novoDia').value = '';
+      document.getElementById('novoAcertos').value = '0';
+      document.getElementById('novoErros').value = '0';
+      document.getElementById('novoResultado').value = '0';
+      document.getElementById('diarioFormTitle').textContent = 'Adicionar Dia';
+      document.getElementById('adicionarDiaBtn').textContent = 'Adicionar Dia';
+      document.getElementById('cancelarDiaBtn').style.display = 'none';
     });
 
     adicionarDiaBtn.addEventListener('click', adicionarDia);
@@ -1137,11 +1218,56 @@
       calcUpdate();
     });
 
-    // Notes auto-save
+    // Notes com Salvar/Apagar (como no organizacao-financeira)
     const calcNotas = document.getElementById('calcNotas');
-    calcNotas.value = localStorage.getItem('calcNotas') || '';
-    calcNotas.addEventListener('input', () => {
-      localStorage.setItem('calcNotas', calcNotas.value);
+    const calcNotasLista = document.getElementById('calcNotasLista');
+
+    function carregarNotas() {
+      try { return JSON.parse(localStorage.getItem('calcNotasArr')) || []; } catch { return []; }
+    }
+
+    function salvarNotasArr(arr) {
+      localStorage.setItem('calcNotasArr', JSON.stringify(arr));
+    }
+
+    function renderizarNotas() {
+      const notas = carregarNotas();
+      calcNotasLista.innerHTML = '';
+      if (notas.length === 0) {
+        calcNotasLista.innerHTML = '<div class="text-xs text-[#94A3B8] text-center py-2">Nenhuma anotação salva.</div>';
+        return;
+      }
+      for (let i = notas.length - 1; i >= 0; i--) {
+        const n = notas[i];
+        const card = document.createElement('div');
+        card.className = 'bg-[#0D0D0D] border border-[#334155] p-2.5 rounded-lg text-xs';
+        card.innerHTML = '<div class="flex items-start justify-between gap-2"><div class="flex-1"><div class="font-semibold text-slate-50 mb-1 whitespace-pre-wrap">' + n.text + '</div><div class="text-[#94A3B8] text-[10px]">' + n.date + '</div></div><button class="del-nota-btn text-[#94A3B8] hover:text-[#F20C0C] transition p-1 flex-shrink-0" data-idx="' + i + '"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div>';
+        calcNotasLista.appendChild(card);
+      }
+      calcNotasLista.querySelectorAll('.del-nota-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const notas2 = carregarNotas();
+          notas2.splice(parseInt(btn.dataset.idx), 1);
+          salvarNotasArr(notas2);
+          renderizarNotas();
+          mostrarToast('Anotação removida!', 'sucesso');
+        });
+      });
+    }
+
+    renderizarNotas();
+
+    document.getElementById('salvarNotasBtn').addEventListener('click', () => {
+      const texto = calcNotas.value.trim();
+      if (!texto) { mostrarToast('Digite algo para salvar.', 'erro'); return; }
+      const notas = carregarNotas();
+      const agora = new Date();
+      const dataStr = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      notas.push({ text: texto, date: dataStr });
+      salvarNotasArr(notas);
+      calcNotas.value = '';
+      renderizarNotas();
+      mostrarToast('Anotação salva!', 'sucesso');
     });
 
     document.addEventListener('keydown', (e) => {
@@ -1184,6 +1310,8 @@
       atualizarPaginaCapital();
       atualizarResumoDiario();
       atualizarChartDiario();
+      renderizarCalendario();
+      mostrarToast('Configurações salvas!', 'sucesso');
     });
 
     // ================================================================
@@ -1207,6 +1335,170 @@
     }
 
     // ================================================================
+    // CALENDÁRIO (Resumo do Mês)
+    // ================================================================
+    if (!state.mesCalendario) {
+      const d = new Date();
+      state.mesCalendario = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    }
+    let calDiaSelecionado = null;
+
+    function formatarMesLabelCal(chave) {
+      const [ano, mes] = chave.split('-').map(Number);
+      const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+      return meses[mes - 1] + ' ' + ano;
+    }
+
+    function getRegistrosDoMes() {
+      const [ano, mes] = state.mesCalendario.split('-').map(Number);
+      const d = new Date();
+      const mesAtual = d.getMonth() + 1;
+      const anoAtual = d.getFullYear();
+      if (ano === anoAtual && mes === mesAtual) {
+        return state.registros;
+      }
+      return [];
+    }
+
+    function renderizarCalendario() {
+      const [ano, mes] = state.mesCalendario.split('-').map(Number);
+      document.getElementById('calMesLabel').textContent = formatarMesLabelCal(state.mesCalendario);
+
+      const primeiroDia = new Date(ano, mes - 1, 1);
+      const ultimoDia = new Date(ano, mes, 0);
+      const diasNoMes = ultimoDia.getDate();
+      const inicioSemana = primeiroDia.getDay();
+
+      const hoje = new Date();
+      const hojeStr = hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0') + '-' + String(hoje.getDate()).padStart(2, '0');
+
+      const registros = getRegistrosDoMes();
+      const diasComRegistro = {};
+      for (const r of registros) {
+        diasComRegistro[r.dia] = r;
+      }
+
+      const grid = document.getElementById('calGrid');
+      grid.innerHTML = '';
+
+      const mesAnterior = mes === 1 ? 12 : mes - 1;
+      const anoAnterior = mes === 1 ? ano - 1 : ano;
+      const ultimoDiaAnterior = new Date(anoAnterior, mesAnterior, 0).getDate();
+      for (let i = inicioSemana - 1; i >= 0; i--) {
+        const dia = ultimoDiaAnterior - i;
+        const el = document.createElement('div');
+        el.className = 'cal-dia other-month';
+        el.textContent = dia;
+        grid.appendChild(el);
+      }
+
+      for (let d = 1; d <= diasNoMes; d++) {
+        const el = document.createElement('div');
+        el.className = 'cal-dia';
+        const diaStr = ano + '-' + String(mes).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+        if (diaStr === hojeStr) el.classList.add('today');
+        if (diasComRegistro[d]) {
+          el.classList.add('has-registro');
+          if (diasComRegistro[d].resultado < 0) el.classList.add('negative');
+        }
+        if (calDiaSelecionado === d) el.classList.add('selected');
+        el.textContent = d;
+        el.dataset.dia = d;
+        el.addEventListener('click', () => selecionarDiaCal(d));
+        grid.appendChild(el);
+      }
+
+      const totalCells = inicioSemana + diasNoMes;
+      const resto = (7 - (totalCells % 7)) % 7;
+      for (let i = 1; i <= resto; i++) {
+        const el = document.createElement('div');
+        el.className = 'cal-dia other-month';
+        el.textContent = i;
+        grid.appendChild(el);
+      }
+
+      if (calDiaSelecionado && calDiaSelecionado <= diasNoMes) {
+        mostrarDetalhesDiaCal(calDiaSelecionado);
+      } else {
+        esconderDetalhesCal();
+      }
+
+      atualizarResumoMes();
+    }
+
+    function atualizarResumoMes() {
+      const dia = calDiaSelecionado;
+      const registros = getRegistrosDoMes();
+      const registro = registros.find(r => r.dia === dia);
+      let capitalAcumulado = state.config.valorInicial;
+      if (registro) {
+        const sorted = [...registros].sort((a, b) => a.dia - b.dia);
+        for (const r of sorted) {
+          capitalAcumulado += r.resultado;
+          if (r.dia === dia) break;
+        }
+      }
+      document.getElementById('resumoCapital').textContent = registro ? fmtB(capitalAcumulado) : '—';
+      document.getElementById('resumoPlacar').innerHTML = registro
+        ? '<span class="text-profit">' + registro.acertos + '</span> x <span class="text-red-500">' + registro.erros + '</span>'
+        : '<span class="text-slate-400">—</span>';
+      document.getElementById('resumoOperacoes').textContent = registro ? '1' : '0';
+    }
+
+    function selecionarDiaCal(dia) {
+      calDiaSelecionado = dia;
+      renderizarCalendario();
+    }
+
+    function mostrarDetalhesDiaCal(dia) {
+      document.getElementById('calSemDia').style.display = 'none';
+      document.getElementById('calComDia').style.display = 'block';
+      document.getElementById('calDiaLabel').textContent = 'Dia ' + dia;
+
+      const registros = getRegistrosDoMes().filter(r => r.dia === dia);
+      const info = document.getElementById('calDiaInfo');
+      info.innerHTML = '';
+
+      if (registros.length === 0) {
+        info.innerHTML = '<div class="text-xs text-[#94A3B8]">Nenhum registro neste dia.</div>';
+      } else {
+        for (const r of registros) {
+          const resultadoClass = r.resultado >= 0 ? 'text-profit' : 'text-red-500';
+          const card = document.createElement('div');
+          card.className = 'bg-[#0D0D0D] border border-[#334155] rounded-lg p-3 text-xs';
+          card.innerHTML = '<div class="flex justify-between mb-1"><span class="stat-label">Acertos</span><span class="font-bold text-slate-50">' + r.acertos + '</span></div><div class="flex justify-between mb-1"><span class="stat-label">Erros</span><span class="font-bold text-slate-50">' + r.erros + '</span></div><div class="flex justify-between"><span class="stat-label">Resultado</span><span class="font-bold ' + resultadoClass + '">' + fmtB(r.resultado) + '</span></div>';
+          info.appendChild(card);
+        }
+      }
+    }
+
+    function esconderDetalhesCal() {
+      document.getElementById('calSemDia').style.display = 'block';
+      document.getElementById('calComDia').style.display = 'none';
+      document.getElementById('calDiaLabel').textContent = 'Selecione um dia';
+    }
+
+    document.getElementById('calMesAnterior').addEventListener('click', () => {
+      const [ano, mes] = state.mesCalendario.split('-').map(Number);
+      let novoMes = mes - 1;
+      let novoAno = ano;
+      if (novoMes < 1) { novoMes = 12; novoAno--; }
+      state.mesCalendario = novoAno + '-' + String(novoMes).padStart(2, '0');
+      calDiaSelecionado = null;
+      renderizarCalendario();
+    });
+
+    document.getElementById('calMesSeguinte').addEventListener('click', () => {
+      const [ano, mes] = state.mesCalendario.split('-').map(Number);
+      let novoMes = mes + 1;
+      let novoAno = ano;
+      if (novoMes > 12) { novoMes = 1; novoAno++; }
+      state.mesCalendario = novoAno + '-' + String(novoMes).padStart(2, '0');
+      calDiaSelecionado = null;
+      renderizarCalendario();
+    });
+
+    // ================================================================
     // INIT
     // ================================================================
     atualizarMesAno();
@@ -1216,6 +1508,9 @@
     atualizarResumoDiario();
     atualizarChartDiario();
     renderizarRegistros();
+    const hojeDia = new Date().getDate();
+    calDiaSelecionado = hojeDia;
+    renderizarCalendario();
   </script>
   <script>
     if ('serviceWorker' in navigator) {
