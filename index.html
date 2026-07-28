@@ -430,8 +430,16 @@
       </div>
       <div class="card">
         <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <button id="diarioMesAnterior" class="text-[#94A3B8] hover:text-white transition p-1" style="touch-action:manipulation">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <h2 class="text-sm font-bold text-slate-50" id="diarioMesAno"></h2>
+            <button id="diarioMesSeguinte" class="text-[#94A3B8] hover:text-white transition p-1" style="touch-action:manipulation">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
           <h2 class="text-sm font-bold text-slate-50" id="diarioFormTitle">Adicionar Dia</h2>
-          <span class="text-xs text-gray-600 font-medium" id="diarioMesAno"></span>
         </div>
         <div class="flex flex-wrap items-end gap-3 mb-5 p-4 rounded-lg bg-[#0D0D0D] border border-[#334155]">
           <div class="flex-1 min-w-[80px]">
@@ -1033,22 +1041,35 @@
       const winRate = totalTrades > 0 ? (totalWins / totalTrades) * 100 : 0;
       const placarHtml = '<span class="text-profit">' + totalWins + '</span> x <span class="text-red-500">' + totalLosses + '</span>';
       visaoPlacar.innerHTML = placarHtml;
-      document.getElementById('projecaoPlacar').innerHTML = placarHtml;
       visaoWinRate.textContent = winRate.toFixed(1) + '%';
       visaoWinRate.style.color = winRate >= 50 ? '#55E088' : '#F20C0C';
+      visaoTotalOps.textContent = totalTrades;
+      atualizarProjecaoDiaria();
+    }
+
+    function atualizarProjecaoDiaria() {
+      const registros = getRegistrosDoMes();
+      let totalWins = 0, totalLosses = 0;
+      for (const r of registros) {
+        totalWins += r.acertos;
+        totalLosses += r.erros;
+      }
+      const totalTrades = totalWins + totalLosses;
+      const winRate = totalTrades > 0 ? (totalWins / totalTrades) * 100 : 0;
       const wrColor = winRate >= 50 ? '#55E088' : '#F20C0C';
+      document.getElementById('projecaoPlacar').innerHTML = '<span class="text-profit">' + totalWins + '</span> x <span class="text-red-500">' + totalLosses + '</span>';
       document.getElementById('projecaoWinRate').textContent = winRate.toFixed(1) + '%';
       document.getElementById('projecaoWinRate').style.color = wrColor;
-      visaoTotalOps.textContent = totalTrades;
       document.getElementById('projecaoTotalOps').textContent = totalTrades;
     }
 
     function renderizarRegistros() {
-      if (state.registros.length === 0) {
-        diarioLista.innerHTML = '<p class="text-gray-600 text-center py-6 text-sm">Nenhum registro no mês atual.</p>';
+      const registrosMes = getRegistrosDoMes();
+      if (registrosMes.length === 0) {
+        diarioLista.innerHTML = '<p class="text-gray-600 text-center py-6 text-sm">Nenhum registro neste mês.</p>';
         return;
       }
-      const sorted = [...state.registros].sort((a, b) => a.dia - b.dia);
+      const sorted = [...registrosMes].sort((a, b) => a.dia - b.dia);
       let html = '<div class="space-y-2">';
       for (const r of sorted) {
         const cor = r.resultado >= 0 ? 'text-profit' : 'text-red-500';
@@ -1092,11 +1113,11 @@
       if (!dia || dia < 1 || dia > 31) { mostrarToast('Informe um dia válido (1-31).', 'aviso'); return; }
 
       if (diaEditandoId) {
-        const idx = state.registros.findIndex(r => r.dia === diaEditandoId);
+        const idx = state.registros.findIndex(r => r.dia === diaEditandoId && r.mes === state.mesCalendario);
         if (idx === -1) return;
         const antigo = state.registros[idx];
         state.capitalAtual -= antigo.resultado;
-        state.registros[idx] = { dia, acertos, erros, resultado };
+        state.registros[idx] = { dia, acertos, erros, resultado, mes: state.mesCalendario };
         state.capitalAtual += resultado;
         if (state.capitalAtual < 0) state.capitalAtual = 0;
         persistir();
@@ -1117,9 +1138,9 @@
         return;
       }
 
-      if (state.registros.some(r => r.dia === dia)) { mostrarToast('Dia ' + dia + ' já registrado.', 'erro'); return; }
+      if (state.registros.some(r => r.dia === dia && r.mes === state.mesCalendario)) { mostrarToast('Dia ' + dia + ' já registrado.', 'erro'); return; }
 
-      state.registros.push({ dia, acertos, erros, resultado });
+      state.registros.push({ dia, acertos, erros, resultado, mes: state.mesCalendario });
       state.capitalAtual += resultado;
       if (state.capitalAtual < 0) state.capitalAtual = 0;
       persistir();
@@ -1139,7 +1160,7 @@
 
     async function deletarRegistro(dia) {
       if (!await mostrarConfirm('Excluir registro do Dia ' + dia + '?')) return;
-      const idx = state.registros.findIndex(r => r.dia === dia);
+      const idx = state.registros.findIndex(r => r.dia === dia && r.mes === state.mesCalendario);
       if (idx === -1) return;
       const removido = state.registros.splice(idx, 1)[0];
       state.capitalAtual -= removido.resultado;
@@ -1161,7 +1182,7 @@
       const editBtn = e.target.closest('.edit-btn');
       if (editBtn) {
         const dia = parseInt(editBtn.dataset.dia);
-        const registro = state.registros.find(r => r.dia === dia);
+        const registro = state.registros.find(r => r.dia === dia && r.mes === state.mesCalendario);
         if (!registro) return;
         diaEditandoId = dia;
         document.getElementById('novoDia').value = registro.dia;
@@ -1196,6 +1217,14 @@
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        if (btn.dataset.tab === 'projecao') {
+          atualizarMesAno();
+          atualizarProjecaoDiaria();
+          renderizarRegistros();
+        }
+        if (btn.dataset.tab === 'resumo') {
+          renderizarCalendario();
+        }
         if (chartDiario) {
           chartDiario.resize();
           chartDiario.update('none');
@@ -1390,11 +1419,7 @@
     // MÊS / ANO
     // ================================================================
     function atualizarMesAno() {
-      const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-      ];
-      const d = new Date();
-      diarioMesAno.textContent = meses[d.getMonth()] + ' ' + d.getFullYear();
+      diarioMesAno.textContent = formatarMesLabelCal(state.mesCalendario);
     }
 
     // ================================================================
@@ -1402,6 +1427,10 @@
     // ================================================================
     function carregarDados() {
       aplicarConfigNoForm(state.config);
+      const mesAtual = new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0');
+      for (const r of state.registros) {
+        if (!r.mes) r.mes = mesAtual;
+      }
       state.capitalAtual = state.config.valorInicial + state.registros.reduce((s, r) => s + r.resultado, 0);
       if (state.capitalAtual < 0) state.capitalAtual = 0;
     }
@@ -1422,14 +1451,8 @@
     }
 
     function getRegistrosDoMes() {
-      const [ano, mes] = state.mesCalendario.split('-').map(Number);
-      const d = new Date();
-      const mesAtual = d.getMonth() + 1;
-      const anoAtual = d.getFullYear();
-      if (ano === anoAtual && mes === mesAtual) {
-        return state.registros;
-      }
-      return [];
+      const chave = state.mesCalendario;
+      return state.registros.filter(r => r.mes === chave);
     }
 
     function renderizarCalendario() {
@@ -1571,6 +1594,23 @@
       calDiaSelecionado = null;
       renderizarCalendario();
     });
+
+    function navegarMesDir(delta) {
+      const [ano, mes] = state.mesCalendario.split('-').map(Number);
+      let novoMes = mes + delta;
+      let novoAno = ano;
+      if (novoMes < 1) { novoMes = 12; novoAno--; }
+      if (novoMes > 12) { novoMes = 1; novoAno++; }
+      state.mesCalendario = novoAno + '-' + String(novoMes).padStart(2, '0');
+      calDiaSelecionado = null;
+      atualizarMesAno();
+      atualizarProjecaoDiaria();
+      renderizarRegistros();
+      renderizarCalendario();
+    }
+
+    document.getElementById('diarioMesAnterior').addEventListener('click', () => navegarMesDir(-1));
+    document.getElementById('diarioMesSeguinte').addEventListener('click', () => navegarMesDir(1));
 
     // ================================================================
     // INIT
