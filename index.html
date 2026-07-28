@@ -825,6 +825,18 @@
             backgroundColor: [],
             borderRadius: 4,
             borderSkipped: false,
+          }, {
+            label: ' Média Móvel',
+            type: 'line',
+            data: [],
+            borderColor: '#EAB308',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHitRadius: 10,
+            tension: 0.3,
+            fill: false,
+            order: 0,
           }]
         },
         options: {
@@ -879,6 +891,12 @@
       chartDiario.data.labels = labels;
       chartDiario.data.datasets[0].data = data;
       chartDiario.data.datasets[0].backgroundColor = cores;
+      const sma = [];
+      for (let i = 0; i < data.length; i++) {
+        if (i < 2) { sma.push(null); continue; }
+        sma.push((data[i] + data[i - 1] + data[i - 2]) / 3);
+      }
+      chartDiario.data.datasets[1].data = sma;
       chartDiario.update('none');
       chartDiario.resize();
 
