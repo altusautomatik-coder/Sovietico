@@ -1428,7 +1428,6 @@
     // LOAD FROM STORAGE
     // ================================================================
     function carregarDados() {
-      aplicarConfigNoForm(state.config);
       const mesAtual = new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0');
       for (const r of state.registros) {
         if (!r.mes) r.mes = mesAtual;
