@@ -867,6 +867,7 @@
             cubicInterpolationMode: 'monotone',
             tension: 0.4,
             fill: false,
+            yAxisID: 'y1',
             order: 1,
           }]
         },
@@ -891,7 +892,8 @@
           },
           scales: {
             x: { offset: true, ticks: { color: '#334155', maxTicksLimit: 10, font: { size: 11 } }, grid: { display: false } },
-            y: { position: 'left', ticks: { color: '#334155', font: { size: 10 }, maxTicksLimit: 5, callback: (v) => 'R$' + v.toFixed(0) }, grid: { color: 'rgba(51,65,85,0.2)', drawBorder: false, borderDash: [3, 5] } }
+            y: { position: 'left', ticks: { color: '#334155', font: { size: 10 }, maxTicksLimit: 5, callback: (v) => 'R$' + v.toFixed(0) }, grid: { color: 'rgba(51,65,85,0.2)', drawBorder: false, borderDash: [3, 5] } },
+            y1: { position: 'right', display: false, grid: { display: false } }
           }
         },
         plugins: [zeroLinePlugin]
