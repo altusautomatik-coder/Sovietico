@@ -103,6 +103,7 @@
     }
     .btn-primary:hover { background: #0F6B30; }
     .btn-primary:active { transform: scale(0.97); }
+    .chart-card { background: #0A0A0A; }
     .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
     .btn-danger { background: #8C0712; color: #f8fafc; border: 1px solid #8C0712; font-weight: 700; padding: 0.65rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; transition: opacity 0.2s, transform 0.1s; }
     .btn-danger:hover { background: #A60A0A; }
@@ -195,6 +196,7 @@
     body.light-mode [style*="color:#94A3B8"] { color: #2F2F2F !important; }
     body.light-mode [class*="border-l-slate-700"] { border-left-color: #d8d4cc !important; }
     body.light-mode .card { background: #fafaf8; border-color: #d8d4cc; box-shadow: none; }
+    body.light-mode .chart-card { background: #fafaf8 !important; }
     body.light-mode .card-green { background: #fafaf8; border-color: #d8d4cc; }
     body.light-mode .stat-card { background: #fafaf8; border-color: #d8d4cc; }
     body.light-mode .stat-card:hover { border-color: #bfb9ae; }
@@ -304,12 +306,15 @@
           </div>
         </div>
       </div>
-      <div class="card">
-        <div class="flex items-center justify-between mb-4 flex-wrap gap-1">
-          <h2 class="text-sm font-bold text-slate-50 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#55E088" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Evolução do Capital</h2>
-          <div class="flex items-center gap-3 text-[11px] font-semibold">
-            <span class="text-[#64748B]">Início: <span id="chartLabelInicio">R$ 1.000,00</span></span>
-            <span id="chartLabelAtualWrapper">Atual: <span id="chartLabelAtual">R$ 1.000,00</span></span>
+      <div class="card chart-card">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#55E088" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            <h2 class="text-sm font-bold text-slate-50">Evolução da Banca</h2>
+          </div>
+          <div class="flex items-center gap-4 text-[11px] font-semibold">
+            <span class="text-[#64748B]">Início <span id="chartLabelInicio" class="text-slate-50">R$ 1.000,00</span></span>
+            <span class="text-[#64748B]">Atual <span id="chartLabelAtual" class="text-slate-50">R$ 1.000,00</span></span>
           </div>
         </div>
         <div class="relative h-48 sm:h-80">
@@ -812,6 +817,22 @@
     // ================================================================
     let chartDiario = null;
 
+    const gradientPlugin = {
+      id: 'gradientFill',
+      beforeDraw(chart) {
+        const { ctx, chartArea } = chart;
+        if (!chartArea) return;
+        const ds = chart.data.datasets[1];
+        if (!ds) return;
+        ctx.save();
+        const grad = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+        grad.addColorStop(0, 'rgba(85, 224, 136, 0.25)');
+        grad.addColorStop(0.5, 'rgba(85, 224, 136, 0.08)');
+        grad.addColorStop(1, 'rgba(85, 224, 136, 0)');
+        ds.backgroundColor = grad;
+        ctx.restore();
+      }
+    };
 
     function initChartDiario() {
       const ctx = document.getElementById('chartDiario').getContext('2d');
@@ -825,19 +846,25 @@
             backgroundColor: [],
             borderRadius: 4,
             borderSkipped: false,
+            order: 2,
           }, {
             label: ' Capital',
             type: 'line',
             data: [],
-            borderColor: '#EAB308',
+            borderColor: '#55E088',
             backgroundColor: 'transparent',
-            borderWidth: 2,
-            pointRadius: 0,
+            borderWidth: 2.5,
+            pointRadius: 3,
+            pointBackgroundColor: '#55E088',
+            pointBorderColor: '#0D0D0D',
+            pointBorderWidth: 1.5,
             pointHitRadius: 10,
-            tension: 0.1,
-            fill: false,
+            cubicInterpolationMode: 'monotone',
+            tension: 0.4,
+            fill: true,
             yAxisID: 'y1',
-            spanGaps: true,
+            spanGaps: false,
+            order: 1,
           }]
         },
         options: {
@@ -845,15 +872,7 @@
           maintainAspectRatio: false,
           interaction: { intersect: false, mode: 'index' },
           plugins: {
-            legend: {
-              labels: {
-                color: '#94A3B8',
-                font: { size: 12, weight: '700' },
-                boxWidth: 12,
-                boxHeight: 12,
-                padding: 12,
-              },
-            },
+            legend: { display: false },
             tooltip: {
               backgroundColor: '#0D0D0D',
               titleColor: '#e2e8f0',
@@ -863,26 +882,33 @@
               padding: 10,
               displayColors: false,
               callbacks: {
-                label: (ctx) => fmtB(ctx.parsed.y),
+                label: (ctx) => {
+                  if (ctx.datasetIndex === 0) return 'Resultado: ' + fmtB(ctx.parsed.y);
+                  return 'Capital: ' + fmtB(ctx.parsed.y);
+                },
               },
             }
           },
           scales: {
             x: { offset: true, ticks: { color: '#334155', maxTicksLimit: 10, font: { size: 11 } }, grid: { display: false } },
-            y: { ticks: { color: '#334155', font: { size: 11 }, callback: (v) => 'R$' + v.toFixed(0) }, grid: { display: false }, title: { display: true, text: 'Resultado (R$)', color: '#94A3B8', font: { size: 10 } } },
-            y1: { position: 'right', ticks: { color: '#EAB308', font: { size: 11 }, callback: (v) => 'R$' + v.toFixed(0) }, grid: { display: false }, title: { display: true, text: 'Capital (R$)', color: '#EAB308', font: { size: 10 } } }
+            y: { position: 'left', ticks: { color: '#334155', font: { size: 10 }, maxTicksLimit: 5, callback: (v) => 'R$' + v.toFixed(0) }, grid: { color: 'rgba(51,65,85,0.2)', drawBorder: false, borderDash: [3, 5] } },
+            y1: { position: 'right', ticks: { color: '#55E088', font: { size: 10 }, maxTicksLimit: 5, callback: (v) => 'R$' + v.toFixed(0) }, grid: { display: false } }
           }
-        }
+        },
+        plugins: [gradientPlugin]
       });
       document.getElementById('chartLabelInicio').textContent = fmtB(state.config.valorInicial);
       document.getElementById('chartLabelAtual').textContent = fmtB(state.config.valorInicial);
-      document.getElementById('chartLabelAtualWrapper').style.color = '#94A3B8';
     }
 
     function atualizarChartDiario() {
       if (!chartDiario) return;
       const regPorDia = {};
-      for (const r of state.registros) regPorDia[r.dia] = r;
+      let ultimoDia = 0;
+      for (const r of state.registros) {
+        regPorDia[r.dia] = r;
+        if (r.dia > ultimoDia) ultimoDia = r.dia;
+      }
       const labels = [];
       const data = [];
       const cores = [];
@@ -894,8 +920,12 @@
         const val = r ? r.resultado : 0;
         data.push(val);
         cores.push(r ? (val >= 0 ? '#55E088' : '#F20C0C') : 'rgba(0,0,0,0)');
-        capital += val;
-        capitalData.push(capital);
+        if (d <= ultimoDia) {
+          capital += val;
+          capitalData.push(capital);
+        } else {
+          capitalData.push(null);
+        }
       }
       chartDiario.data.labels = labels;
       chartDiario.data.datasets[0].data = data;
@@ -909,7 +939,7 @@
       document.getElementById('chartLabelInicio').textContent = fmtB(state.config.valorInicial);
       const lblAtual = document.getElementById('chartLabelAtual');
       lblAtual.textContent = fmtB(total);
-      document.getElementById('chartLabelAtualWrapper').style.color = total < state.config.valorInicial ? '#F20C0C' : '#55E088';
+      lblAtual.style.color = total < state.config.valorInicial ? '#F20C0C' : '#55E088';
     }
 
     // ================================================================
