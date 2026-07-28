@@ -826,17 +826,23 @@
             borderRadius: 4,
             borderSkipped: false,
           }, {
-            label: ' Média Móvel',
+            label: ' Resultado',
             type: 'line',
             data: [],
-            borderColor: '#EAB308',
+            borderColor: '#55E088',
             backgroundColor: 'transparent',
-            borderWidth: 2,
-            pointRadius: 0,
+            borderWidth: 2.5,
+            pointRadius: 4,
+            pointBackgroundColor: '#55E088',
+            pointBorderColor: '#0D0D0D',
+            pointBorderWidth: 1.5,
             pointHitRadius: 10,
-            tension: 0.3,
+            tension: 0.15,
             fill: false,
-            order: 0,
+            segment: {
+              borderColor: (ctx) => ctx.p1.parsed.y >= 0 ? '#55E088' : '#F20C0C',
+              backgroundColor: 'transparent',
+            },
           }]
         },
         options: {
@@ -891,12 +897,7 @@
       chartDiario.data.labels = labels;
       chartDiario.data.datasets[0].data = data;
       chartDiario.data.datasets[0].backgroundColor = cores;
-      const sma = [];
-      for (let i = 0; i < data.length; i++) {
-        if (i < 2) { sma.push(null); continue; }
-        sma.push((data[i] + data[i - 1] + data[i - 2]) / 3);
-      }
-      chartDiario.data.datasets[1].data = sma;
+      chartDiario.data.datasets[1].data = data;
       chartDiario.update('none');
       chartDiario.resize();
 
