@@ -141,25 +141,25 @@
       font-weight: 700; font-size: 0.85rem; color: #94A3B8;
       flex-shrink: 0;
     }
-    .cal-dia { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 0.5rem; cursor: pointer; font-size: 0.82rem; font-weight: 500; transition: background 0.15s, border-color 0.15s; border: 1px solid transparent; color: #e2e8f0; background: transparent; position: relative; user-select: none; gap: 1px; padding: 2px; }
+    .cal-dia { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 0.6rem; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: background 0.15s, border-color 0.15s; border: 1.5px solid transparent; color: #e2e8f0; background: transparent; user-select: none; }
     .cal-dia:hover { background: #1E293B; border-color: #334155; }
     .cal-dia.other-month { color: #475569; opacity: 0.5; }
     .cal-dia.today { border-color: #8C0712; }
     .cal-dia.selected { background: #8C0712; border-color: #8C0712; }
     .cal-dia.selected .dia-num { color: #fff; }
     .cal-dia .dia-num { font-weight: 700; font-size: 0.85rem; line-height: 1; }
-    .cal-dia.positivo { background: rgba(85,224,136,0.15); border-color: rgba(85,224,136,0.3); }
-    .cal-dia.negativo { background: rgba(242,12,12,0.15); border-color: rgba(242,12,12,0.3); }
-    .cal-dia.positivo:hover { background: rgba(85,224,136,0.25); }
-    .cal-dia.negativo:hover { background: rgba(242,12,12,0.25); }
+    .cal-dia.positivo { background: rgba(85,224,136,0.25); border-color: rgba(85,224,136,0.5); }
+    .cal-dia.negativo { background: rgba(242,12,12,0.25); border-color: rgba(242,12,12,0.5); }
+    .cal-dia.positivo:hover { background: rgba(85,224,136,0.4); }
+    .cal-dia.negativo:hover { background: rgba(242,12,12,0.4); }
     body.light-mode .cal-dia { color: #2F2F2F; }
     body.light-mode .cal-dia:hover { background: #e5e0d8; border-color: #d8d4cc; }
     body.light-mode .cal-dia.other-month { color: #b0a99a; }
     body.light-mode .cal-dia.today { border-color: #8C0712; }
     body.light-mode .cal-dia.selected { background: #8C0712; border-color: #8C0712; }
     body.light-mode .cal-dia.selected .dia-num { color: #fff; }
-    body.light-mode .cal-dia.positivo { background: rgba(18,130,59,0.12); border-color: rgba(18,130,59,0.25); }
-    body.light-mode .cal-dia.negativo { background: rgba(242,12,12,0.1); border-color: rgba(242,12,12,0.2); }
+    body.light-mode .cal-dia.positivo { background: rgba(18,130,59,0.2); border-color: rgba(18,130,59,0.4); }
+    body.light-mode .cal-dia.negativo { background: rgba(242,12,12,0.18); border-color: rgba(242,12,12,0.35); }
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0D0D0D; }
@@ -350,7 +350,7 @@
     <div id="tab-config" class="tab-content">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
-          <h2 class="text-sm font-bold text-slate-50 mb-4">Valores do Capital</h2>
+          <h2 class="text-sm font-bold text-slate-50 mb-4">Projeção e Status</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div class="stat-card border-l-4 border-l-slate-700">
               <div class="stat-label">Capital Inicial</div>
@@ -376,10 +376,6 @@
             <div class="stat-card border-l-4 border-l-slate-700">
               <div class="stat-label">Valor por Trade (R$)</div>
               <div class="text-lg sm:text-xl font-bold text-slate-50 mt-1" id="dispValorTrade">R$ 20,00</div>
-            </div>
-            <div class="stat-card border-l-4 border-l-slate-700">
-              <div class="stat-label">Win Rate (%)</div>
-              <div class="text-lg sm:text-xl font-bold text-slate-50 mt-1" id="dispWinRate">0,0%</div>
             </div>
           </div>
         </div>
@@ -477,7 +473,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
             </div>
-            <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-[#94A3B8] mb-2">
+            <div class="grid grid-cols-7 gap-1.5 text-center text-xs font-semibold text-[#94A3B8] mb-2">
               <div class="py-1">DOM</div>
               <div class="py-1">SEG</div>
               <div class="py-1">TER</div>
@@ -486,25 +482,27 @@
               <div class="py-1">SEX</div>
               <div class="py-1">SÁB</div>
             </div>
-            <div id="calGrid" class="grid grid-cols-7 gap-1"></div>
+            <div id="calGrid" class="grid grid-cols-7 gap-1.5"></div>
           </div>
         </div>
-        <div class="lg:col-span-1 space-y-4">
+        <div class="lg:col-span-1">
           <div class="card">
-            <h2 class="text-sm font-bold text-slate-50 mb-4">Resumo</h2>
-            <div class="space-y-3">
-              <div><span class="stat-label">Capital</span><div class="text-base font-bold text-slate-50" id="resumoCapital">R$ 1.000,00</div></div>
-              <div><span class="stat-label">Placar</span><div class="text-base font-bold" id="resumoPlacar"><span class="text-profit">0</span> x <span class="text-red-500">0</span></div></div>
-              <div><span class="stat-label">Operações</span><div class="text-base font-bold text-slate-50" id="resumoOperacoes">0</div></div>
+            <h2 class="text-sm font-bold text-slate-50 mb-4">Resumo do Mês</h2>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div><span class="stat-label">Total Acertos</span><div class="text-base font-bold text-profit" id="resumoTotalAcertos">0</div></div>
+              <div><span class="stat-label">Total Erros</span><div class="text-base font-bold text-red-500" id="resumoTotalErros">0</div></div>
+              <div><span class="stat-label">Total Operações</span><div class="text-base font-bold text-slate-50" id="resumoTotalOpsCal">0</div></div>
+              <div><span class="stat-label">Resultado</span><div class="text-base font-bold" id="resumoTotalResultado">R$ 0,00</div></div>
             </div>
-          </div>
-          <div class="card" id="calDetalhes">
-            <h2 class="text-sm font-bold text-slate-50 mb-4" id="calDiaLabel">Selecione um dia</h2>
-            <div id="calSemDia">
-              <p class="text-xs text-[#94A3B8]">Clique em um dia no calendário para ver os detalhes.</p>
-            </div>
-            <div id="calComDia" style="display:none">
-              <div class="space-y-2" id="calDiaInfo"></div>
+            <hr class="border-t border-[#334155] my-4">
+            <div id="calDetalhes">
+              <h2 class="text-sm font-bold text-slate-50 mb-3" id="calDiaLabel">Selecione um dia</h2>
+              <div id="calSemDia">
+                <p class="text-xs text-[#94A3B8]">Clique em um dia para ver os detalhes.</p>
+              </div>
+              <div id="calComDia" style="display:none">
+                <div class="space-y-2" id="calDiaInfo"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -1010,8 +1008,7 @@
       const totalTrades = totalWins + totalLosses;
       const winRate = totalTrades > 0 ? (totalWins / totalTrades) * 100 : 0;
       const wrEl = document.getElementById('dispWinRate');
-      wrEl.textContent = winRate.toFixed(1) + '%';
-      wrEl.style.color = winRate >= 50 ? '#55E088' : '#F20C0C';
+      if (wrEl) { wrEl.textContent = winRate.toFixed(1) + '%'; wrEl.style.color = winRate >= 50 ? '#55E088' : '#F20C0C'; }
     }
 
     // ================================================================
@@ -1507,22 +1504,19 @@
     }
 
     function atualizarResumoMes() {
-      const dia = calDiaSelecionado;
       const registros = getRegistrosDoMes();
-      const registro = registros.find(r => r.dia === dia);
-      let capitalAcumulado = state.config.valorInicial;
-      if (registro) {
-        const sorted = [...registros].sort((a, b) => a.dia - b.dia);
-        for (const r of sorted) {
-          capitalAcumulado += r.resultado;
-          if (r.dia === dia) break;
-        }
+      let totalAcertos = 0, totalErros = 0, totalResultado = 0;
+      for (const r of registros) {
+        totalAcertos += r.acertos;
+        totalErros += r.erros;
+        totalResultado += r.resultado;
       }
-      document.getElementById('resumoCapital').textContent = registro ? fmtB(capitalAcumulado) : '—';
-      document.getElementById('resumoPlacar').innerHTML = registro
-        ? '<span class="text-profit">' + registro.acertos + '</span> x <span class="text-red-500">' + registro.erros + '</span>'
-        : '<span class="text-slate-400">—</span>';
-      document.getElementById('resumoOperacoes').textContent = registro ? (registro.acertos + registro.erros) : '0';
+      document.getElementById('resumoTotalAcertos').textContent = totalAcertos;
+      document.getElementById('resumoTotalErros').textContent = totalErros;
+      document.getElementById('resumoTotalOpsCal').textContent = totalAcertos + totalErros;
+      const elTotalRes = document.getElementById('resumoTotalResultado');
+      elTotalRes.textContent = fmtB(totalResultado);
+      elTotalRes.style.color = totalResultado >= 0 ? '#55E088' : '#F20C0C';
     }
 
     function selecionarDiaCal(dia) {
