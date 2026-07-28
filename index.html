@@ -320,7 +320,7 @@
           <div class="flex items-center gap-2 mb-3 text-[11px] font-semibold px-1">
             <span style="color:#94A3B8">Resultado (R$)</span>
             <span id="chartPercentBadge" style="display:none"></span>
-            <span id="chartCapitalLabel" style="color:#F59E0B;font-weight:600;display:none">Capital</span>
+            <span id="chartMediaLabel" style="color:#F59E0B;font-weight:600;display:none">Média</span>
           </div>
           <div class="relative h-48 sm:h-80">
             <canvas id="chartDiario"></canvas>
@@ -856,7 +856,7 @@
             borderSkipped: false,
             order: 2,
           }, {
-            label: ' Capital',
+            label: ' Média',
             type: 'line',
             data: [],
             borderColor: '#F59E0B',
@@ -867,7 +867,6 @@
             cubicInterpolationMode: 'monotone',
             tension: 0.4,
             fill: false,
-            yAxisID: 'y1',
             order: 1,
           }]
         },
@@ -888,7 +887,10 @@
               callbacks: {
                 label: (ctx) => {
                   if (ctx.datasetIndex === 0) return 'Resultado: ' + fmtB(ctx.parsed.y);
-                  return 'Capital: ' + fmtB(ctx.parsed.y);
+                  const sorted = [...state.registros].sort((a, b) => a.dia - b.dia);
+                  let cap = state.config.valorInicial;
+                  for (let i = 0; i <= ctx.dataIndex; i++) cap += sorted[i].resultado;
+                  return 'Capital: ' + fmtB(cap);
                 },
               },
             }
@@ -896,7 +898,7 @@
           scales: {
             x: { offset: true, ticks: { color: '#334155', maxTicksLimit: 10, font: { size: 11 } }, grid: { display: false } },
             y: { position: 'left', ticks: { color: '#334155', font: { size: 10 }, maxTicksLimit: 5, callback: (v) => 'R$' + v.toFixed(0) }, grid: { color: 'rgba(51,65,85,0.2)', drawBorder: false, borderDash: [3, 5] } },
-            y1: { position: 'right', display: true, ticks: { display: false }, grid: { display: false }, border: { display: false } }
+
           }
         },
         plugins: [zeroLinePlugin]
@@ -916,16 +918,16 @@
         data.push(r.resultado);
         cores.push(r.resultado >= 0 ? '#55E088' : '#F20C0C');
       }
-      const capitalLine = [];
-      let acc = state.config.valorInicial;
+      const sma = [];
       for (let i = 0; i < data.length; i++) {
-        acc += data[i];
-        capitalLine.push(acc);
+        if (i === 0) sma.push(data[0]);
+        else if (i === 1) sma.push((data[0] + data[1]) / 2);
+        else sma.push((data[i] + data[i - 1] + data[i - 2]) / 3);
       }
       chartDiario.data.labels = labels;
       chartDiario.data.datasets[0].data = data;
       chartDiario.data.datasets[0].backgroundColor = cores;
-      chartDiario.data.datasets[1].data = capitalLine;
+      chartDiario.data.datasets[1].data = sma;
       chartDiario.update('none');
       chartDiario.resize();
 
@@ -947,7 +949,7 @@
         icone.innerHTML = '<polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>';
         icone.style.stroke = '#F20C0C';
       }
-      document.getElementById('chartCapitalLabel').style.display = data.length >= 1 ? 'inline' : 'none';
+      document.getElementById('chartMediaLabel').style.display = data.length >= 1 ? 'inline' : 'none';
       const badge = document.getElementById('chartPercentBadge');
       if (pct >= 0) {
         badge.textContent = '+' + pct.toFixed(1) + '%';
