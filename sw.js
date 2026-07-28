@@ -1,5 +1,5 @@
-const CACHE = 'gestao-sov-v6';
-const URLS = ['manifest.json', 'icongestao.ico', 'icon-192.png', 'icon-512.png'];
+const CACHE = 'gestao-sov-v7';
+const URLS = ['/', 'manifest.json', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(URLS)));
@@ -16,5 +16,13 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+  e.respondWith(
+    fetch(e.request)
+      .then(res => {
+        const cacheRes = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, cacheRes));
+        return res;
+      })
+      .catch(() => caches.match(e.request).then(res => res || new Response('Offline', { status: 503 })))
+  );
 });
