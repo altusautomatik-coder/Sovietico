@@ -146,14 +146,9 @@
     .cal-dia.today { border-color: #8C0712; }
     .cal-dia.selected { background: #8C0712; border-color: #8C0712; }
     .cal-dia.selected .dia-num { color: #fff; }
-    .cal-dia.selected .dia-valor { color: #fff; }
     .cal-dia .dia-num { font-weight: 700; font-size: 0.85rem; line-height: 1; }
-    .cal-dia .dia-valor { font-size: 0.6rem; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
     .cal-dia.positivo { background: rgba(85,224,136,0.15); border-color: rgba(85,224,136,0.3); }
-    .cal-dia.positivo .dia-valor { color: #55E088; }
     .cal-dia.negativo { background: rgba(242,12,12,0.15); border-color: rgba(242,12,12,0.3); }
-    .cal-dia.negativo .dia-valor { color: #F20C0C; }
-    .cal-dia.vazio .dia-valor { display: none; }
     .cal-dia.positivo:hover { background: rgba(85,224,136,0.25); }
     .cal-dia.negativo:hover { background: rgba(242,12,12,0.25); }
     body.light-mode .cal-dia { color: #2F2F2F; }
@@ -162,11 +157,8 @@
     body.light-mode .cal-dia.today { border-color: #8C0712; }
     body.light-mode .cal-dia.selected { background: #8C0712; border-color: #8C0712; }
     body.light-mode .cal-dia.selected .dia-num { color: #fff; }
-    body.light-mode .cal-dia.selected .dia-valor { color: #fff; }
     body.light-mode .cal-dia.positivo { background: rgba(18,130,59,0.12); border-color: rgba(18,130,59,0.25); }
-    body.light-mode .cal-dia.positivo .dia-valor { color: #12823B; }
     body.light-mode .cal-dia.negativo { background: rgba(242,12,12,0.1); border-color: rgba(242,12,12,0.2); }
-    body.light-mode .cal-dia.negativo .dia-valor { color: #F20C0C; }
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0D0D0D; }
@@ -1413,22 +1405,12 @@
         numSpan.className = 'dia-num';
         numSpan.textContent = d;
         el.appendChild(numSpan);
-        const valSpan = document.createElement('span');
-        valSpan.className = 'dia-valor';
         if (diasComRegistro[d]) {
           const r = diasComRegistro[d];
-          if (r.resultado >= 0) {
-            el.classList.add('positivo');
-            valSpan.textContent = 'R$' + r.resultado.toFixed(0).replace('.', ',');
-          } else {
-            el.classList.add('negativo');
-            valSpan.textContent = '-R$' + Math.abs(r.resultado).toFixed(0).replace('.', ',');
-          }
+          el.classList.add(r.resultado >= 0 ? 'positivo' : 'negativo');
         } else {
           el.classList.add('vazio');
-          valSpan.textContent = '—';
         }
-        el.appendChild(valSpan);
         if (calDiaSelecionado === d) el.classList.add('selected');
         el.dataset.dia = d;
         el.addEventListener('click', () => selecionarDiaCal(d));
