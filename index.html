@@ -320,7 +320,7 @@
           <div class="flex items-center gap-2 mb-3 text-[11px] font-semibold px-1">
             <span style="color:#94A3B8">Resultado (R$)</span>
             <span id="chartPercentBadge" style="display:none"></span>
-            <span id="chartSmaLabel" style="color:#F59E0B;font-weight:600;display:none">Média</span>
+            <span id="chartCapitalLabel" style="color:#F59E0B;font-weight:600;display:none">Capital</span>
           </div>
           <div class="relative h-48 sm:h-80">
             <canvas id="chartDiario"></canvas>
@@ -856,7 +856,7 @@
             borderSkipped: false,
             order: 2,
           }, {
-            label: ' Média',
+            label: ' Capital',
             type: 'line',
             data: [],
             borderColor: '#F59E0B',
@@ -885,7 +885,7 @@
               padding: 10,
               displayColors: false,
               callbacks: {
-                label: (ctx) => 'Resultado: ' + fmtB(ctx.parsed.y),
+                label: (ctx) => ctx.dataset.label.trim() + ': ' + fmtB(ctx.parsed.y),
               },
             }
           },
@@ -911,16 +911,16 @@
         data.push(r.resultado);
         cores.push(r.resultado >= 0 ? '#55E088' : '#F20C0C');
       }
-      const sma = [];
+      const capitalLine = [];
+      let acc = state.config.valorInicial;
       for (let i = 0; i < data.length; i++) {
-        if (i === 0) sma.push(data[0]);
-        else if (i === 1) sma.push((data[0] + data[1]) / 2);
-        else sma.push((data[i] + data[i - 1] + data[i - 2]) / 3);
+        acc += data[i];
+        capitalLine.push(acc);
       }
       chartDiario.data.labels = labels;
       chartDiario.data.datasets[0].data = data;
       chartDiario.data.datasets[0].backgroundColor = cores;
-      chartDiario.data.datasets[1].data = sma;
+      chartDiario.data.datasets[1].data = capitalLine;
       chartDiario.update('none');
       chartDiario.resize();
 
@@ -950,7 +950,7 @@
         badge.textContent = pct.toFixed(1) + '%';
         badge.style.cssText = 'background:rgba(242,12,12,0.15);color:#F20C0C;display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;margin-left:4px';
       }
-      document.getElementById('chartSmaLabel').style.display = data.length >= 1 ? 'inline' : 'none';
+      document.getElementById('chartCapitalLabel').style.display = data.length >= 1 ? 'inline' : 'none';
     }
 
     // ================================================================
@@ -1514,7 +1514,7 @@
       document.getElementById('resumoPlacar').innerHTML = registro
         ? '<span class="text-profit">' + registro.acertos + '</span> x <span class="text-red-500">' + registro.erros + '</span>'
         : '<span class="text-slate-400">—</span>';
-      document.getElementById('resumoOperacoes').textContent = registro ? '1' : '0';
+      document.getElementById('resumoOperacoes').textContent = registro ? (registro.acertos + registro.erros) : '0';
     }
 
     function selecionarDiaCal(dia) {
