@@ -1,4 +1,4 @@
-const CACHE = 'gestao-sov-v4';
+const CACHE = 'gestao-sov-v5';
 const URLS = ['manifest.json', 'icongestao.ico', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', (e) => {
@@ -16,9 +16,5 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  if (e.request.mode === 'navigate') {
-    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-  } else {
-    e.respondWith(caches.match(e.request).then((r) => r || fetch(e.request)));
-  }
+  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
 });

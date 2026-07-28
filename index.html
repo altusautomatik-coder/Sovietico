@@ -60,7 +60,6 @@
     input:not([type="range"]):not([type="date"]):focus { outline: none; border-color: #94A3B8; box-shadow: 0 0 0 3px rgba(140,7,18,0.12); }
     input:not([type="range"]):not([type="date"]):disabled { opacity: 0.5; cursor: default; }
     .tab-btn {
-      padding: 0.6rem 1.4rem;
       font-size: 0.82rem;
       font-weight: 600;
       border-radius: 0.5rem 0.5rem 0 0;
@@ -145,6 +144,13 @@
     .animate-slide-in { animation: slide-in 0.25s ease-out; }
     .calc-btn:active { transform: scale(0.94); }
     .calc-btn:hover { filter: brightness(1.15); }
+    .cal-dia { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; cursor: pointer; font-size: 0.82rem; font-weight: 500; transition: background 0.15s, border-color 0.15s; border: 1px solid transparent; color: #e2e8f0; background: transparent; position: relative; user-select: none; }
+    .cal-dia:hover { background: #1E293B; border-color: #334155; }
+    .cal-dia.other-month { color: #475569; }
+    .cal-dia.today { border-color: #8C0712; font-weight: 700; }
+    .cal-dia.selected { background: #8C0712; border-color: #8C0712; color: #fff; font-weight: 700; }
+    .cal-dia.has-gasto::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; border-radius: 50%; background: #55E088; }
+    .cal-dia.selected.has-gasto::after { background: #fff; }
     @media (max-width: 768px) {
       .card, .card-green { padding: 1rem; }
       .stat-card { padding: 0.75rem 1rem; }
@@ -156,6 +162,57 @@
       .btn-primary { padding: 0.55rem 1rem; font-size: 0.82rem; }
       .day-card { padding: 0.7rem 1rem; }
     }
+    body.light-mode { background: #f5f3ef; color: #2F2F2F; }
+    body.light-mode .text-slate-50 { color: #2F2F2F !important; }
+    body.light-mode .text-slate-400 { color: #2F2F2F !important; }
+    body.light-mode .text-gray-500 { color: #2F2F2F !important; }
+    body.light-mode .text-gray-600 { color: #2F2F2F !important; }
+    body.light-mode .stat-label { color: #2F2F2F; }
+    body.light-mode .text-label { color: #2F2F2F; }
+    body.light-mode .text-profit { color: #12823B !important; }
+    body.light-mode th { color: #2F2F2F; border-bottom-color: #d8d4cc; }
+    body.light-mode td { border-bottom-color: #d8d4cc; }
+    body.light-mode tr:nth-child(even) td { background: rgba(0,0,0,0.02); }
+    body.light-mode .border-gray-800 { border-color: #d8d4cc; }
+    body.light-mode [class*="bg-\[#0D0D0D\]"] { background: #FAFAF8 !important; }
+    body.light-mode [class*="text-\[#94A3B8\]"] { color: #2F2F2F !important; }
+    body.light-mode [style*="color:#94A3B8"] { color: #2F2F2F !important; }
+    body.light-mode [class*="border-l-slate-700"] { border-left-color: #d8d4cc !important; }
+    body.light-mode .card { background: #fafaf8; border-color: #d8d4cc; box-shadow: none; }
+    body.light-mode .card-green { background: #fafaf8; border-color: #d8d4cc; }
+    body.light-mode .stat-card { background: #fafaf8; border-color: #d8d4cc; }
+    body.light-mode .stat-card:hover { border-color: #bfb9ae; }
+    body.light-mode input:not([type="range"]):not([type="date"]) { background: #fafaf8; border-color: #d8d4cc; color: #2F2F2F; }
+    body.light-mode input:not([type="range"]):not([type="date"]):focus { border-color: #A60A0A; box-shadow: 0 0 0 3px rgba(166,10,10,0.08); }
+    body.light-mode .tab-btn { color: #2F2F2F; }
+    body.light-mode .tab-btn.active { color: #A60A0A; border-bottom-color: #A60A0A; background: rgba(166,10,10,0.04); }
+    body.light-mode .tab-btn:hover:not(.active) { color: #8C0712; }
+    body.light-mode .day-card { background: #fafaf8; border-color: #d8d4cc; }
+    body.light-mode .day-card:hover { border-color: #bfb9ae; }
+    body.light-mode .day-num { background: #fafaf8; border-color: #d8d4cc; color: #2F2F2F; }
+    body.light-mode .cal-dia { color: #2F2F2F; }
+    body.light-mode .cal-dia:hover { background: #e5e0d8; border-color: #d8d4cc; }
+    body.light-mode .cal-dia.other-month { color: #b0a99a; }
+    body.light-mode .cal-dia.today { border-color: #8C0712; }
+    body.light-mode .cal-dia.selected { background: #8C0712; border-color: #8C0712; color: #fff; }
+    body.light-mode .cal-dia.has-gasto::after { background: #12823B; }
+    body.light-mode .cal-dia.selected.has-gasto::after { background: #fff; }
+    body.light-mode #toastContainer > div { background: #fafaf8 !important; border-color: #d8d4cc !important; color: #2F2F2F !important; }
+    body.light-mode #confirmModal > div { background: #fafaf8; border-color: #d8d4cc; }
+    body.light-mode #confirmModal p { color: #2F2F2F; }
+    body.light-mode #loginOverlay { background: #f5f3ef; }
+    body.light-mode #loginOverlay .border { border-color: #d8d4cc; background: #fafaf8; }
+    body.light-mode #loginOverlay input { background: #fafaf8; border-color: #d8d4cc; color: #2F2F2F; }
+    body.light-mode div[style*="background:#0D0D0D;border:1px solid #334155"] { background: #fafaf8 !important; border-color: #d8d4cc !important; }
+    body.light-mode #calcDisplay { background: #fafaf8 !important; border-color: #d8d4cc !important; color: #2F2F2F !important; }
+    body.light-mode #calcNotas { background: #fafaf8 !important; border-color: #d8d4cc !important; color: #2F2F2F !important; }
+    body.light-mode #calcNotas::placeholder { color: #2F2F2F !important; }
+    body.light-mode .calc-btn[style*="background:#1E293B"] { background: #e8e4dc !important; color: #2F2F2F !important; }
+    body.light-mode button[style*="border:1px solid #334155"] { background: #fafaf8 !important; border-color: #d8d4cc !important; }
+    body.light-mode #calcClear { background: #e8e4dc !important; border-color: #d8d4cc !important; color: #2F2F2F !important; }
+    body.light-mode #calcBackspace { background: #e8e4dc !important; border-color: #d8d4cc !important; color: #2F2F2F !important; }
+    body.light-mode ::-webkit-scrollbar-track { background: #f5f3ef; }
+    body.light-mode ::-webkit-scrollbar-thumb { background: #cdc7bb; }
   </style>
 </head>
 <body>
@@ -200,60 +257,91 @@
           <img src="icon-192.png" alt="" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-700 ring-1 ring-slate-600 flex-shrink-0">
           <h1 class="text-base sm:text-xl font-bold tracking-tight text-slate-50">Gestão <span class="text-slate-400">Soviética</span></h1>
         </div>
-        <div id="userArea" class="hidden flex-row sm:flex-col items-end flex-shrink-0">
-          <span id="headerUserEmail" class="hidden sm:block text-xs text-[#94A3B8] mb-2"></span>
-          <div class="flex gap-1.5 sm:gap-2">
-            <button id="headerSyncBtn" class="px-2 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold text-white whitespace-nowrap" style="background:#12823B;display:none">Sync</button>
-            <button id="headerLogoutBtn" class="px-2 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold text-white whitespace-nowrap" style="background:#8C0712;">Sair</button>
-          </div>
+        <div id="userArea" class="hidden flex items-center gap-2 flex-shrink-0">
+          <span id="headerUserEmail" class="hidden sm:block text-xs text-[#94A3B8]"></span>
+          <button id="themeToggleBtn" class="p-1.5 sm:p-2 rounded-lg text-sm leading-none transition" style="background:#0D0D0D;border:1px solid #334155;cursor:pointer" title="Alternar tema">🌙</button>
+          <button id="headerLogoutBtn" class="px-2 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold text-white whitespace-nowrap" style="background:#8C0712;">Sair</button>
         </div>
       </div>
     </div>
 
     <!-- Tabs -->
-    <div class="flex border-b border-gray-800 mb-6 gap-0 sm:gap-1 sm:overflow-visible">
-      <button class="tab-btn active flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="capital"><span class="sm:hidden">📊 Capital</span><span class="hidden sm:inline">📊 Gerenciamento de Capital</span></button>
-      <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="diario"><span class="sm:hidden">📅 Diário</span><span class="hidden sm:inline">📅 Acompanhamento Diário</span></button>
-      <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-4 py-3 sm:py-3" style="touch-action:manipulation" data-tab="calc"><span class="sm:hidden">🔢</span><span class="hidden sm:inline">🔢 Calculadora</span></button>
+    <div class="flex border-b border-gray-800 mb-6 gap-0 sm:gap-1 overflow-x-auto">
+      <button class="tab-btn active flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-3 py-3 sm:py-3" style="touch-action:manipulation" data-tab="visao"><span class="block sm:inline text-base sm:text-sm leading-tight">📊</span><span class="block text-[9px] sm:hidden mt-0.5">Geral</span><span class="hidden sm:inline"> Visão Geral</span></button>
+      <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-3 py-3 sm:py-3" style="touch-action:manipulation" data-tab="config"><span class="block sm:inline text-base sm:text-sm leading-tight">⚙️</span><span class="block text-[9px] sm:hidden mt-0.5">Config</span><span class="hidden sm:inline"> Configuração</span></button>
+      <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-3 py-3 sm:py-3" style="touch-action:manipulation" data-tab="projecao"><span class="block sm:inline text-base sm:text-sm leading-tight">📈</span><span class="block text-[9px] sm:hidden mt-0.5">Diária</span><span class="hidden sm:inline"> Projeção Diária</span></button>
+      <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-3 py-3 sm:py-3" style="touch-action:manipulation" data-tab="resumo"><span class="block sm:inline text-base sm:text-sm leading-tight">📅</span><span class="block text-[9px] sm:hidden mt-0.5">Mês</span><span class="hidden sm:inline"> Resumo do Mês</span></button>
+      <button class="tab-btn flex-1 sm:flex-none text-center text-[13px] sm:text-sm whitespace-nowrap px-1 sm:px-3 py-3 sm:py-3" style="touch-action:manipulation" data-tab="calc"><span class="block sm:inline text-base sm:text-sm leading-tight">🔢</span><span class="block text-[9px] sm:hidden mt-0.5">Calc</span><span class="hidden sm:inline"> Calculadora</span></button>
     </div>
 
     <!-- ================================================================ -->
-    <!-- TAB 1: CAPITAL -->
+    <!-- TAB 1: VISÃO GERAL (resumo do mês + gráfico) -->
     <!-- ================================================================ -->
-    <div id="tab-capital" class="tab-content active">
-      <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <!-- LEFT: Config -->
-        <div class="lg:col-span-2">
-          <div class="card-green">
-            <h2 class="text-sm font-bold text-slate-50 mb-5">Configurações do Capital</h2>
-            <div class="space-y-4">
-              <div>
-                <label class="stat-label block mb-1.5">Valor Inicial (R$)</label>
-                <input type="text" id="cfgValorInicial" value="1000" inputmode="decimal" />
-              </div>
-              <div>
-                <label class="stat-label block mb-1.5">Meta de Lucro (%)</label>
-                <input type="number" id="cfgMetaLucro" value="20" min="1" max="500" step="1" />
-              </div>
-              <div>
-                <label class="stat-label block mb-1.5">% por Trade</label>
-                <input type="number" id="cfgPorcTrade" value="2" min="0.5" max="20" step="0.5" />
-              </div>
-              <div>
-                <label class="stat-label block mb-1.5">% Stop Win</label>
-                <input type="number" id="cfgStopWin" value="10" min="1" max="50" step="1" />
-              </div>
-              <div>
-                <label class="stat-label block mb-1.5">% Stop Loss</label>
-                <input type="number" id="cfgStopLoss" value="5" min="1" max="50" step="1" />
-              </div>
-              <button class="btn-primary w-full" id="salvarConfigBtn">Salvar Configurações</button>
-            </div>
+    <div id="tab-visao" class="tab-content active">
+      <h2 class="text-sm font-bold text-slate-50 mb-4 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#55E088" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Resumo do Mês</h2>
+      <div style="background:#0D0D0D;border:1px solid #334155;border-radius:1rem;padding:1rem 1.25rem;" class="mb-5">
+        <div class="grid grid-cols-3 gap-3 sm:gap-4 text-center">
+          <div>
+            <span class="stat-label"><span class="sm:hidden">Capital</span><span class="hidden sm:inline">Capital Atual (Total)</span></span>
+            <div class="text-base sm:text-xl font-bold text-slate-50 mt-0.5" id="diarioTotalCapital">R$ 1.000,00</div>
+          </div>
+          <div>
+            <span class="stat-label"><span class="sm:hidden">Placar</span><span class="hidden sm:inline">Placar Geral</span></span>
+            <div class="text-base sm:text-xl font-bold mt-0.5" id="diarioPlacar"><span class="text-profit">0</span> x <span class="text-red-500">0</span></div>
+          </div>
+          <div>
+            <span class="stat-label"><span class="sm:hidden">Operações</span><span class="hidden sm:inline">Total de Operações</span></span>
+            <div class="text-base sm:text-xl font-bold text-slate-50 mt-0.5" id="diarioTotalOps">0</div>
           </div>
         </div>
+      </div>
+      <div class="card">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-1">
+          <h2 class="text-sm font-bold text-slate-50 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#55E088" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Evolução do Capital</h2>
+          <div class="flex items-center gap-3 text-[11px] font-semibold">
+            <span class="text-[#64748B]">Início: <span id="chartLabelInicio">R$ 1.000,00</span></span>
+            <span id="chartLabelAtualWrapper">Atual: <span id="chartLabelAtual">R$ 1.000,00</span></span>
+          </div>
+        </div>
+        <div class="relative h-48 sm:h-80">
+          <canvas id="chartDiario"></canvas>
+        </div>
+      </div>
+    </div>
 
-        <!-- RIGHT: Projections -->
-        <div class="lg:col-span-3">
+    <!-- ================================================================ -->
+    <!-- TAB 2: CONFIGURAÇÃO DO CAPITAL (config + valores) -->
+    <!-- ================================================================ -->
+    <div id="tab-config" class="tab-content">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="card-green">
+          <h2 class="text-sm font-bold text-slate-50 mb-5">Configurações do Capital</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="stat-label block mb-1.5">Valor Inicial (R$)</label>
+              <input type="text" id="cfgValorInicial" value="1000" inputmode="decimal" />
+            </div>
+            <div>
+              <label class="stat-label block mb-1.5">Meta de Lucro (%)</label>
+              <input type="number" id="cfgMetaLucro" value="20" min="1" max="500" step="1" />
+            </div>
+            <div>
+              <label class="stat-label block mb-1.5">% por Trade</label>
+              <input type="number" id="cfgPorcTrade" value="2" min="0.5" max="20" step="0.5" />
+            </div>
+            <div>
+              <label class="stat-label block mb-1.5">% Stop Win</label>
+              <input type="number" id="cfgStopWin" value="10" min="1" max="50" step="1" />
+            </div>
+            <div>
+              <label class="stat-label block mb-1.5">% Stop Loss</label>
+              <input type="number" id="cfgStopLoss" value="5" min="1" max="50" step="1" />
+            </div>
+            <button class="btn-primary w-full" id="salvarConfigBtn">Salvar Configurações</button>
+          </div>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-slate-50 mb-4">Valores do Capital</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div class="stat-card border-l-4 border-l-slate-700">
               <div class="stat-label">Capital Inicial</div>
@@ -268,11 +356,11 @@
               <div class="stat-label">Meta de Lucro (R$)</div>
               <div class="text-xl font-bold text-slate-50 mt-1" id="dispMetaLucro">R$ 200,00</div>
             </div>
-            <div class="stat-card border-l-4 border-l-slate-700">
+            <div class="stat-card border-l-4 border-l-[#55E088]">
               <div class="stat-label">Stop Win (R$)</div>
               <div class="text-xl font-bold" id="dispStopWin" style="color:#55E088">R$ 100,00</div>
             </div>
-            <div class="stat-card border-l-4 border-l-slate-700">
+            <div class="stat-card border-l-4 border-l-[#F20C0C]">
               <div class="stat-label">Stop Loss (R$)</div>
               <div class="text-xl font-bold text-red-500 mt-1" id="dispStopLoss">R$ 50,00</div>
             </div>
@@ -290,50 +378,30 @@
     </div>
 
     <!-- ================================================================ -->
-    <!-- TAB 2: DIARIO -->
+    <!-- TAB 3: PROJEÇÃO DIÁRIA (resumo + adicionar dia) -->
     <!-- ================================================================ -->
-    <div id="tab-diario" class="tab-content">
-      <!-- Section 1: Summary -->
-      <h2 class="text-sm font-bold text-slate-50 mb-2 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#55E088" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Resumo do Mês</h2>
+    <div id="tab-projecao" class="tab-content">
       <div style="background:#0D0D0D;border:1px solid #334155;border-radius:1rem;padding:1rem 1.25rem;" class="mb-5">
         <div class="grid grid-cols-3 gap-3 sm:gap-4 text-center">
           <div>
-            <span class="stat-label"><span class="sm:hidden">Capital</span><span class="hidden sm:inline">Capital Atual (Total)</span></span>
-            <div class="text-base sm:text-xl font-bold text-slate-50 mt-0.5" id="diarioTotalCapital">R$ 1.000,00</div>
+            <span class="stat-label"><span class="sm:hidden">Capital</span><span class="hidden sm:inline">Capital Atual</span></span>
+            <div class="text-base sm:text-xl font-bold text-slate-50 mt-0.5">R$ 1.000,00</div>
           </div>
           <div>
             <span class="stat-label"><span class="sm:hidden">Placar</span><span class="hidden sm:inline">Placar Geral</span></span>
-            <div class="text-base sm:text-xl font-bold mt-0.5" id="diarioPlacar"><span class="text-profit">0</span> x <span class="text-red-500">0</span></div>
+            <div class="text-base sm:text-xl font-bold mt-0.5" id="projecaoPlacar"><span class="text-profit">0</span> x <span class="text-red-500">0</span></div>
           </div>
           <div>
             <span class="stat-label"><span class="sm:hidden">Operações</span><span class="hidden sm:inline">Total de Operações</span></span>
-            <div class="text-base sm:text-xl font-bold text-slate-50 mt-0.5" id="diarioTotalOps">0</div>
+            <div class="text-base sm:text-xl font-bold text-slate-50 mt-0.5">0</div>
           </div>
         </div>
       </div>
-
-      <!-- Section 2: Chart -->
-      <div class="card mb-5">
-        <div class="flex items-center justify-between mb-4 flex-wrap gap-1">
-          <h2 class="text-sm font-bold text-slate-50 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#55E088" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Evolução do Capital</h2>
-          <div class="flex items-center gap-3 text-[11px] font-semibold">
-            <span class="text-[#64748B]">Início: <span id="chartLabelInicio">R$ 1.000,00</span></span>
-            <span id="chartLabelAtualWrapper">Atual: <span id="chartLabelAtual">R$ 1.000,00</span></span>
-          </div>
-        </div>
-        <div class="relative h-48 sm:h-64">
-          <canvas id="chartDiario"></canvas>
-        </div>
-      </div>
-
-      <!-- Section 3: Records -->
       <div class="card">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-sm font-bold text-slate-50">Mês Atual</h2>
+          <h2 class="text-sm font-bold text-slate-50">Adicionar Dia</h2>
           <span class="text-xs text-gray-600 font-medium" id="diarioMesAno"></span>
         </div>
-
-        <!-- New record form -->
         <div class="flex flex-wrap items-end gap-3 mb-5 p-4 rounded-lg bg-[#0D0D0D] border border-[#334155]">
           <div class="flex-1 min-w-[80px]">
             <label class="stat-label block mb-1">Dia</label>
@@ -353,49 +421,92 @@
           </div>
           <button class="btn-primary h-[42px]" id="adicionarDiaBtn">Adicionar Dia</button>
         </div>
-
-        <!-- Records list -->
         <div id="diarioLista"></div>
       </div>
     </div>
-  </div>
 
-  <!-- ================================================================ -->
-  <!-- TAB 3: CALCULADORA -->
-  <!-- ================================================================ -->
-  <div id="tab-calc" class="tab-content">
-    <div class="card mx-3 sm:mx-auto mb-4 sm:max-w-sm">
-      <h2 class="text-sm font-bold text-slate-50 mb-4 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="8" y2="10"/><line x1="12" y1="10" x2="12" y2="10"/><line x1="16" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="8" y2="18"/><line x1="12" y1="18" x2="12" y2="18"/></svg> Calculadora</h2>
-      <div class="bg-[#0D0D0D] border border-[#334155] rounded-xl p-4">
-        <input type="text" id="calcDisplay" value="0" inputmode="decimal" class="text-right text-2xl font-bold py-3 px-4 mb-4 rounded-lg min-h-[56px]" style="background:#0D0D0D;border:1px solid #334155;color:#F8FAFC;width:100%;outline:none" />
-        <div class="grid grid-cols-4 gap-2">
-          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="7">7</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="8">8</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="9">9</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#8C0712;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="/">÷</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="4">4</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="5">5</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="6">6</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#8C0712;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="*">×</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="1">1</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="2">2</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="3">3</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#8C0712;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="-">−</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="0">0</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc=".">,</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#12823B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="=">=</button>
-          <button class="calc-btn text-lg font-semibold" style="background:#8C0712;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="+">+</button>
+    <!-- ================================================================ -->
+    <!-- TAB 4: RESUMO DO MÊS (calendário + histórico) -->
+    <!-- ================================================================ -->
+    <div id="tab-resumo" class="tab-content">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+          <div class="card">
+            <div class="flex items-center justify-between mb-5">
+              <button id="calMesAnterior" class="text-[#94A3B8] hover:text-white transition p-1" style="touch-action:manipulation">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <h2 class="text-sm font-bold text-slate-50" id="calMesLabel">Janeiro 2026</h2>
+              <button id="calMesSeguinte" class="text-[#94A3B8] hover:text-white transition p-1" style="touch-action:manipulation">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+            <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-[#94A3B8] mb-2">
+              <div class="py-1">DOM</div>
+              <div class="py-1">SEG</div>
+              <div class="py-1">TER</div>
+              <div class="py-1">QUA</div>
+              <div class="py-1">QUI</div>
+              <div class="py-1">SEX</div>
+              <div class="py-1">SÁB</div>
+            </div>
+            <div id="calGrid" class="grid grid-cols-7 gap-1"></div>
+          </div>
         </div>
-        <div class="grid grid-cols-2 gap-2 mt-2">
-          <button id="calcClear" class="py-2 rounded-lg text-sm font-semibold text-white" style="background:#1E293B;border:1px solid #334155">C</button>
-          <button id="calcBackspace" class="py-2 rounded-lg text-sm font-semibold text-white" style="background:#1E293B;border:1px solid #334155">⌫</button>
+        <div class="lg:col-span-1">
+          <div class="card">
+            <h2 class="text-sm font-bold text-slate-50 mb-4">Resumo</h2>
+            <div class="space-y-3">
+              <div><span class="stat-label">Capital</span><div class="text-base font-bold text-slate-50" id="resumoCapital">R$ 1.000,00</div></div>
+              <div><span class="stat-label">Placar</span><div class="text-base font-bold" id="resumoPlacar"><span class="text-profit">0</span> x <span class="text-red-500">0</span></div></div>
+              <div><span class="stat-label">Operações</span><div class="text-base font-bold text-slate-50">0</div></div>
+            </div>
+          </div>
         </div>
       </div>
+      <div class="card mt-6">
+        <h2 class="text-sm font-bold text-slate-50 mb-4">Histórico de Dias</h2>
+        <div id="calHistoricoLista" class="space-y-2"></div>
+      </div>
     </div>
-    <div class="card mx-3 sm:mx-auto mb-4 sm:max-w-sm">
-      <h2 class="text-sm font-bold text-slate-50 mb-3 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Anotações</h2>
+
+    <!-- ================================================================ -->
+    <!-- TAB 5: CALCULADORA + ANOTAÇÕES -->
+    <!-- ================================================================ -->
+    <div id="tab-calc" class="tab-content">
+      <div class="card mx-3 sm:mx-auto mb-4 sm:max-w-sm">
+        <h2 class="text-sm font-bold text-slate-50 mb-4 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="8" y2="10"/><line x1="12" y1="10" x2="12" y2="10"/><line x1="16" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="8" y2="18"/><line x1="12" y1="18" x2="12" y2="18"/></svg> Calculadora</h2>
+        <div class="bg-[#0D0D0D] border border-[#334155] rounded-xl p-4">
+          <input type="text" id="calcDisplay" value="0" inputmode="decimal" class="text-right text-2xl font-bold py-3 px-4 mb-4 rounded-lg min-h-[56px]" style="background:#0D0D0D;border:1px solid #334155;color:#F8FAFC;width:100%;outline:none" />
+          <div class="grid grid-cols-4 gap-2">
+            <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="7">7</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="8">8</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="9">9</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#8C0712;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="/">÷</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="4">4</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="5">5</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="6">6</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#8C0712;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="*">×</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="1">1</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="2">2</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="3">3</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#8C0712;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="-">−</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="0">0</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#1E293B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc=".">,</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#12823B;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="=">=</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#8C0712;color:#F8FAFC;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="+">+</button>
+          </div>
+          <div class="grid grid-cols-2 gap-2 mt-2">
+            <button id="calcClear" class="py-2 rounded-lg text-sm font-semibold text-white" style="background:#1E293B;border:1px solid #334155">C</button>
+            <button id="calcBackspace" class="py-2 rounded-lg text-sm font-semibold text-white" style="background:#1E293B;border:1px solid #334155">⌫</button>
+          </div>
+        </div>
+      </div>
+      <div class="card mx-3 sm:mx-auto mb-4 sm:max-w-sm">
+        <h2 class="text-sm font-bold text-slate-50 mb-3 flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Anotações</h2>
       <textarea id="calcNotas" class="w-full rounded-lg text-sm text-[#e2e8f0] placeholder-[#94A3B8] resize-none" style="background:#0D0D0D;border:1px solid #334155;padding:0.75rem;min-height:100px;outline:none" placeholder="Escreva suas anotações aqui..."></textarea>
     </div>
+  </div>
   </div>
 
   <script>
@@ -446,6 +557,32 @@
 
     let usuarioAtual = null;
 
+    // ================================================================
+    // THEME TOGGLE
+    // ================================================================
+    function aplicarTema(tema) {
+      if (tema === 'light') {
+        document.body.classList.add('light-mode');
+        document.getElementById('themeToggleBtn').textContent = '☀️';
+        document.getElementById('themeToggleBtn').style.background = '#fafaf8';
+        document.getElementById('themeToggleBtn').style.borderColor = '#d8d4cc';
+      } else {
+        document.body.classList.remove('light-mode');
+        document.getElementById('themeToggleBtn').textContent = '🌙';
+        document.getElementById('themeToggleBtn').style.background = '#0D0D0D';
+        document.getElementById('themeToggleBtn').style.borderColor = '#334155';
+      }
+      localStorage.setItem('gestaoTema', tema);
+    }
+
+    const temaSalvo = localStorage.getItem('gestaoTema') || 'dark';
+    aplicarTema(temaSalvo);
+
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      const atual = document.body.classList.contains('light-mode') ? 'light' : 'dark';
+      aplicarTema(atual === 'light' ? 'dark' : 'light');
+    });
+
     function mostrarErro(msg) {
       mostrarToast(msg, 'erro');
     }
@@ -479,21 +616,6 @@
     });
 
     document.getElementById('headerLogoutBtn').addEventListener('click', () => auth.signOut());
-
-    document.getElementById('headerSyncBtn').addEventListener('click', async () => {
-      if (!usuarioAtual) { mostrarToast('Não logado', 'aviso'); return; }
-      try {
-        const doc = await db.collection('dados').doc(usuarioAtual.uid).get();
-        if (doc.exists) {
-          const data = doc.data();
-          mostrarToast('Firestore: ' + (data.registros?.length || 0) + ' | Local: ' + state.registros.length, 'sucesso');
-        } else {
-          mostrarToast('Firestore: documento não existe', 'aviso');
-        }
-      } catch (e) {
-        mostrarToast('Erro: ' + e.message, 'erro');
-      }
-    });
 
     document.getElementById('mostrarCadastroBtn').addEventListener('click', () => {
       document.getElementById('loginForm').classList.add('hidden');
@@ -653,53 +775,19 @@
     // ================================================================
     let chartDiario = null;
 
+
     function initChartDiario() {
       const ctx = document.getElementById('chartDiario').getContext('2d');
-      const dadoInicial = state.capitalAtual - state.registros.reduce((s, r) => s + r.resultado, 0);
-      const capitalInicial = state.config.valorInicial;
-      const corInicial = dadoInicial < capitalInicial ? '#F20C0C' : '#55E088';
-
-      // Bar chart icon for legend
-      const icoCanvas = document.createElement('canvas');
-      icoCanvas.width = 20;
-      icoCanvas.height = 16;
-      const icoCtx = icoCanvas.getContext('2d');
-      function desenharIcone(cor) {
-        icoCtx.clearRect(0, 0, 20, 16);
-        icoCtx.fillStyle = cor;
-        const bw = 4, gap = 3, bars = [8, 14, 11];
-        for (let i = 0; i < 3; i++) {
-          const bx = 2 + i * (bw + gap);
-          const by = 15;
-          icoCtx.fillRect(bx, by - bars[i], bw, bars[i]);
-        }
-      }
-
       chartDiario = new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
-          labels: ['Início'],
+          labels: [],
           datasets: [{
-            label: ' Capital (R$)',
-            data: [dadoInicial],
-borderColor: corInicial,
-              backgroundColor: function(ctx) {
-                if (!ctx.chart.chartArea) return corInicial === '#F20C0C' ? 'rgba(242,12,12,0.08)' : 'rgba(85,224,136,0.08)';
-                const {top, bottom} = ctx.chart.chartArea;
-                const grad = ctx.chart.ctx.createLinearGradient(0, top, 0, bottom);
-                const r = corInicial === '#F20C0C' ? '242,12,12' : '85,224,136';
-                grad.addColorStop(0, `rgba(${r},0.3)`);
-                grad.addColorStop(1, `rgba(${r},0)`);
-                return grad;
-              },
-              fill: true,
-              tension: 0.3,
-              pointRadius: 4,
-              pointBackgroundColor: function(ctx) {
-                return ctx.parsed.y < state.config.valorInicial ? '#F20C0C' : '#55E088';
-              },
-            pointHoverRadius: 6,
-            borderWidth: 2.5,
+            label: ' Resultado (R$)',
+            data: [],
+            backgroundColor: [],
+            borderRadius: 4,
+            borderSkipped: false,
           }]
         },
         options: {
@@ -709,84 +797,60 @@ borderColor: corInicial,
           plugins: {
             legend: {
               labels: {
-                color: corInicial,
-                font: { size: 13, weight: '900' },
-                boxWidth: 20,
-                boxHeight: 16,
+                color: '#94A3B8',
+                font: { size: 12, weight: '700' },
+                boxWidth: 12,
+                boxHeight: 12,
                 padding: 12,
-                boxPadding: 4,
-                usePointStyle: true,
-                pointStyle: (desenharIcone(corInicial), icoCanvas),
               },
             },
             tooltip: {
               backgroundColor: '#0D0D0D',
               titleColor: '#e2e8f0',
-              bodyColor: '#55E088',
+              bodyColor: '#e2e8f0',
               borderColor: '#334155',
               borderWidth: 1,
               padding: 10,
               displayColors: false,
               callbacks: {
-                label: (ctx) => 'R$ ' + ctx.parsed.y.toFixed(2).replace('.', ','),
-                labelTextColor: (ctx) => ctx.parsed.y < state.config.valorInicial ? '#F20C0C' : '#55E088',
+                label: (ctx) => 'R$ ' + Math.abs(ctx.parsed.y).toFixed(2).replace('.', ','),
               },
             }
           },
           scales: {
-            x: { ticks: { color: '#334155', maxTicksLimit: 8, font: { size: 11 } }, grid: { color: '#0D0D0D', drawBorder: false } },
-            y: { ticks: { color: '#334155', font: { size: 11 }, callback: (v) => 'R$' + v.toFixed(0) }, grid: { color: '#0D0D0D', drawBorder: false } }
+            x: { offset: true, ticks: { color: '#334155', maxTicksLimit: 10, font: { size: 11 } }, grid: { display: false } },
+            y: { ticks: { color: '#334155', font: { size: 11 }, callback: (v) => 'R$' + v.toFixed(0) }, grid: { display: false } }
           }
         }
       });
-      chartDiario._icoCanvas = icoCanvas;
-      chartDiario._desenharIcone = desenharIcone;
-
-      document.getElementById('chartLabelInicio').textContent = fmtB(dadoInicial);
-      document.getElementById('chartLabelAtual').textContent = fmtB(dadoInicial);
-      document.getElementById('chartLabelAtualWrapper').style.color = corInicial;
+      document.getElementById('chartLabelInicio').textContent = fmtB(state.config.valorInicial);
+      document.getElementById('chartLabelAtual').textContent = fmtB(state.config.valorInicial);
+      document.getElementById('chartLabelAtualWrapper').style.color = '#94A3B8';
     }
 
     function atualizarChartDiario() {
       if (!chartDiario) return;
       const sorted = [...state.registros].sort((a, b) => a.dia - b.dia);
-      let acc = state.config.valorInicial;
-      const labels = ['Início'];
-      const data = [acc];
+      const labels = [];
+      const data = [];
+      const cores = [];
       for (const r of sorted) {
-        acc += r.resultado;
         labels.push('Dia ' + r.dia);
-        data.push(acc);
+        data.push(r.resultado);
+        cores.push(r.resultado >= 0 ? '#55E088' : '#F20C0C');
       }
-      console.log('Chart data:', JSON.stringify(data));
       chartDiario.data.labels = labels;
       chartDiario.data.datasets[0].data = data;
-      const ultimoValor = data[data.length - 1];
-      const capitalInicial = state.config.valorInicial;
-      const cor = ultimoValor < capitalInicial ? '#F20C0C' : '#55E088';
-      chartDiario.options.plugins.legend.labels.color = cor;
-      chartDiario._desenharIcone(cor);
-      chartDiario.data.datasets[0].borderColor = cor;
-      chartDiario.data.datasets[0].pointBackgroundColor = function(ctx) {
-        return ctx.parsed.y < state.config.valorInicial ? '#F20C0C' : '#55E088';
-      };
-      chartDiario.data.datasets[0].backgroundColor = function(ctx) {
-        if (!ctx.chart.chartArea) return 'rgba(0,0,0,0)';
-        const {top, bottom} = ctx.chart.chartArea;
-        const grad = ctx.chart.ctx.createLinearGradient(0, top, 0, bottom);
-        const r = ultimoValor < capitalInicial ? '242,12,12' : '85,224,136';
-        grad.addColorStop(0, `rgba(${r},0.3)`);
-        grad.addColorStop(1, `rgba(${r},0)`);
-        return grad;
-      };
+      chartDiario.data.datasets[0].backgroundColor = cores;
       chartDiario.update('none');
       chartDiario.resize();
 
-      const ultimo = data[data.length - 1];
-      document.getElementById('chartLabelInicio').textContent = fmtB(data[0]);
+      const ultimoResultado = data.length > 0 ? data[data.length - 1] : 0;
+      const total = state.capitalAtual;
+      document.getElementById('chartLabelInicio').textContent = fmtB(state.config.valorInicial);
       const lblAtual = document.getElementById('chartLabelAtual');
-      lblAtual.textContent = fmtB(ultimo);
-      document.getElementById('chartLabelAtualWrapper').style.color = ultimo < state.config.valorInicial ? '#F20C0C' : '#55E088';
+      lblAtual.textContent = fmtB(total);
+      document.getElementById('chartLabelAtualWrapper').style.color = total < state.config.valorInicial ? '#F20C0C' : '#55E088';
     }
 
     // ================================================================
@@ -944,8 +1008,6 @@ borderColor: corInicial,
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-        const syncBtn = document.getElementById('headerSyncBtn');
-        if (syncBtn) syncBtn.style.display = btn.dataset.tab === 'diario' ? '' : 'none';
         if (chartDiario) {
           chartDiario.resize();
           chartDiario.update('none');
