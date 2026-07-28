@@ -322,32 +322,6 @@
     <!-- ================================================================ -->
     <div id="tab-config" class="tab-content">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="card-green">
-          <h2 class="text-sm font-bold text-slate-50 mb-5">Configurações do Capital</h2>
-          <div class="space-y-4">
-            <div>
-              <label class="stat-label block mb-1.5">Valor Inicial (R$)</label>
-              <input type="text" id="cfgValorInicial" value="1000" inputmode="decimal" />
-            </div>
-            <div>
-              <label class="stat-label block mb-1.5">Meta de Lucro (%)</label>
-              <input type="number" id="cfgMetaLucro" value="20" min="1" max="500" step="1" />
-            </div>
-            <div>
-              <label class="stat-label block mb-1.5">% por Trade</label>
-              <input type="number" id="cfgPorcTrade" value="2" min="0.5" max="20" step="0.5" />
-            </div>
-            <div>
-              <label class="stat-label block mb-1.5">% Stop Win</label>
-              <input type="number" id="cfgStopWin" value="10" min="1" max="50" step="1" />
-            </div>
-            <div>
-              <label class="stat-label block mb-1.5">% Stop Loss</label>
-              <input type="number" id="cfgStopLoss" value="5" min="1" max="50" step="1" />
-            </div>
-            <button class="btn-primary w-full" id="salvarConfigBtn">Salvar Configurações</button>
-          </div>
-        </div>
         <div>
           <h2 class="text-sm font-bold text-slate-50 mb-4">Valores do Capital</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -380,6 +354,32 @@
               <div class="stat-label">Win Rate (%)</div>
               <div class="text-xl font-bold text-slate-50 mt-1" id="dispWinRate">0,0%</div>
             </div>
+          </div>
+        </div>
+        <div class="card-green">
+          <h2 class="text-sm font-bold text-slate-50 mb-5">Configurações do Capital</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="stat-label block mb-1.5">Valor Inicial (R$)</label>
+              <input type="text" id="cfgValorInicial" value="1000" inputmode="decimal" />
+            </div>
+            <div>
+              <label class="stat-label block mb-1.5">Meta de Lucro (%)</label>
+              <input type="number" id="cfgMetaLucro" value="20" min="1" max="500" step="1" />
+            </div>
+            <div>
+              <label class="stat-label block mb-1.5">% por Trade</label>
+              <input type="number" id="cfgPorcTrade" value="2" min="0.5" max="20" step="0.5" />
+            </div>
+            <div>
+              <label class="stat-label block mb-1.5">% Stop Win</label>
+              <input type="number" id="cfgStopWin" value="10" min="1" max="50" step="1" />
+            </div>
+            <div>
+              <label class="stat-label block mb-1.5">% Stop Loss</label>
+              <input type="number" id="cfgStopLoss" value="5" min="1" max="50" step="1" />
+            </div>
+            <button class="btn-primary w-full" id="salvarConfigBtn">Salvar Configurações</button>
           </div>
         </div>
       </div>
