@@ -140,22 +140,33 @@
       font-weight: 700; font-size: 0.85rem; color: #94A3B8;
       flex-shrink: 0;
     }
-    .cal-dia { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; cursor: pointer; font-size: 0.82rem; font-weight: 500; transition: background 0.15s, border-color 0.15s; border: 1px solid transparent; color: #e2e8f0; background: transparent; position: relative; user-select: none; }
+    .cal-dia { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 0.5rem; cursor: pointer; font-size: 0.82rem; font-weight: 500; transition: background 0.15s, border-color 0.15s; border: 1px solid transparent; color: #e2e8f0; background: transparent; position: relative; user-select: none; gap: 1px; padding: 2px; }
     .cal-dia:hover { background: #1E293B; border-color: #334155; }
-    .cal-dia.other-month { color: #475569; }
-    .cal-dia.today { border-color: #8C0712; font-weight: 700; }
-    .cal-dia.selected { background: #8C0712; border-color: #8C0712; color: #fff; font-weight: 700; }
-    .cal-dia.has-registro::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; border-radius: 50%; background: #55E088; }
-    .cal-dia.has-registro.negative::after { background: #F20C0C; }
-    .cal-dia.selected.has-registro::after { background: #fff; }
+    .cal-dia.other-month { color: #475569; opacity: 0.5; }
+    .cal-dia.today { border-color: #8C0712; }
+    .cal-dia.selected { background: #8C0712; border-color: #8C0712; }
+    .cal-dia.selected .dia-num { color: #fff; }
+    .cal-dia.selected .dia-valor { color: #fff; }
+    .cal-dia .dia-num { font-weight: 700; font-size: 0.85rem; line-height: 1; }
+    .cal-dia .dia-valor { font-size: 0.6rem; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
+    .cal-dia.positivo { background: rgba(85,224,136,0.15); border-color: rgba(85,224,136,0.3); }
+    .cal-dia.positivo .dia-valor { color: #55E088; }
+    .cal-dia.negativo { background: rgba(242,12,12,0.15); border-color: rgba(242,12,12,0.3); }
+    .cal-dia.negativo .dia-valor { color: #F20C0C; }
+    .cal-dia.vazio .dia-valor { display: none; }
+    .cal-dia.positivo:hover { background: rgba(85,224,136,0.25); }
+    .cal-dia.negativo:hover { background: rgba(242,12,12,0.25); }
     body.light-mode .cal-dia { color: #2F2F2F; }
     body.light-mode .cal-dia:hover { background: #e5e0d8; border-color: #d8d4cc; }
     body.light-mode .cal-dia.other-month { color: #b0a99a; }
     body.light-mode .cal-dia.today { border-color: #8C0712; }
-    body.light-mode .cal-dia.selected { background: #8C0712; border-color: #8C0712; color: #fff; }
-    body.light-mode .cal-dia.has-registro::after { background: #12823B; }
-    body.light-mode .cal-dia.has-registro.negative::after { background: #F20C0C; }
-    body.light-mode .cal-dia.selected.has-registro::after { background: #fff; }
+    body.light-mode .cal-dia.selected { background: #8C0712; border-color: #8C0712; }
+    body.light-mode .cal-dia.selected .dia-num { color: #fff; }
+    body.light-mode .cal-dia.selected .dia-valor { color: #fff; }
+    body.light-mode .cal-dia.positivo { background: rgba(18,130,59,0.12); border-color: rgba(18,130,59,0.25); }
+    body.light-mode .cal-dia.positivo .dia-valor { color: #12823B; }
+    body.light-mode .cal-dia.negativo { background: rgba(242,12,12,0.1); border-color: rgba(242,12,12,0.2); }
+    body.light-mode .cal-dia.negativo .dia-valor { color: #F20C0C; }
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0D0D0D; }
@@ -1398,12 +1409,27 @@
         el.className = 'cal-dia';
         const diaStr = ano + '-' + String(mes).padStart(2, '0') + '-' + String(d).padStart(2, '0');
         if (diaStr === hojeStr) el.classList.add('today');
+        const numSpan = document.createElement('span');
+        numSpan.className = 'dia-num';
+        numSpan.textContent = d;
+        el.appendChild(numSpan);
+        const valSpan = document.createElement('span');
+        valSpan.className = 'dia-valor';
         if (diasComRegistro[d]) {
-          el.classList.add('has-registro');
-          if (diasComRegistro[d].resultado < 0) el.classList.add('negative');
+          const r = diasComRegistro[d];
+          if (r.resultado >= 0) {
+            el.classList.add('positivo');
+            valSpan.textContent = 'R$' + r.resultado.toFixed(0).replace('.', ',');
+          } else {
+            el.classList.add('negativo');
+            valSpan.textContent = '-R$' + Math.abs(r.resultado).toFixed(0).replace('.', ',');
+          }
+        } else {
+          el.classList.add('vazio');
+          valSpan.textContent = '—';
         }
+        el.appendChild(valSpan);
         if (calDiaSelecionado === d) el.classList.add('selected');
-        el.textContent = d;
         el.dataset.dia = d;
         el.addEventListener('click', () => selecionarDiaCal(d));
         grid.appendChild(el);
