@@ -34,10 +34,79 @@
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore-compat.js">
   </script>
   <style>
+    html { font-size: 110%; }
+    :root {
+      --bg-body: #F8FAFC;
+      --bg-card: #FFFFFF;
+      --bg-input: #FFFFFF;
+      --bg-day-num: #F8FAFC;
+      --bg-table-stripe: rgba(241,245,249,0.5);
+      --bg-login: #F8FAFC;
+      --text-primary: #1E293B;
+      --text-secondary: #64748B;
+      --text-muted: #94A3B8;
+      --border-default: #E2E8F0;
+      --border-light: #F1F5F9;
+      --border-hover: #CBD5E1;
+      --shadow-card: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-stat: 0 1px 2px rgba(0,0,0,0.03);
+      --shadow-stat-hover: 0 2px 4px rgba(0,0,0,0.05);
+      --green: #10B981;
+      --green-hover: #059669;
+      --red: #EF4444;
+      --red-hover: #DC2626;
+      --badge-profit-bg: #D1FAE5;
+      --badge-profit-text: #065F46;
+      --badge-loss-bg: #FEE2E2;
+      --badge-loss-text: #991B1B;
+      --scrollbar-track: #F1F5F9;
+      --scrollbar-thumb: #CBD5E1;
+      --chart-tick: #94A3B8;
+      --chart-grid: rgba(148,163,184,0.2);
+      --cal-bg-hover: #F1F5F9;
+      --cal-color: #1E293B;
+      --cal-other: #CBD5E1;
+    }
+    body.dark-mode {
+      --bg-body: #000000;
+      --bg-card: #121212;
+      --bg-input: #18181B;
+      --bg-day-num: #121212;
+      --bg-table-stripe: rgba(255,255,255,0.03);
+      --bg-login: #000000;
+      --text-primary: #FFFFFF;
+      --text-secondary: #9CA3AF;
+      --text-muted: #6B7280;
+      --border-default: #27272A;
+      --border-light: rgba(255,255,255,0.05);
+      --border-hover: #3F3F46;
+      --shadow-card: 0 2px 8px rgba(0,0,0,0.4);
+      --shadow-stat: 0 1px 4px rgba(0,0,0,0.3);
+      --shadow-stat-hover: 0 2px 8px rgba(0,0,0,0.4);
+      --green: #00FF87;
+      --green-hover: #00CC6A;
+      --red: #FF3B30;
+      --red-hover: #D92E25;
+      --yellow: #F59E0B;
+      --badge-profit-bg: rgba(0,255,135,0.12);
+      --badge-profit-text: #00FF87;
+      --badge-loss-bg: rgba(255,59,48,0.12);
+      --badge-loss-text: #FF3B30;
+      --scrollbar-track: #121212;
+      --scrollbar-thumb: #27272A;
+      --chart-tick: #9CA3AF;
+      --chart-grid: rgba(156,163,175,0.1);
+      --cal-bg-hover: #18181B;
+      --cal-color: #FFFFFF;
+      --cal-other: #3F3F46;
+      --btn-neutral-bg: #18181B;
+      --btn-neutral-text: #F2F3F5;
+      --btn-neutral-hover: #27272A;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: #F8FAFC;
-      color: #1E293B;
+      background: var(--bg-body);
+      color: var(--text-primary);
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
@@ -46,9 +115,9 @@
     }
     input, button, textarea, select { font-family: inherit; }
     input:not([type="range"]):not([type="date"]) {
-      background: #FFFFFF;
-      border: 1px solid #E2E8F0;
-      color: #1E293B;
+      background: var(--bg-input);
+      border: 1px solid var(--border-default);
+      color: var(--text-primary);
       border-radius: 0.5rem;
       padding: 0.6rem 1rem;
       font-size: 0.9rem;
@@ -56,7 +125,7 @@
       transition: border-color 0.2s, box-shadow 0.2s;
       text-indent: 2px;
     }
-    input:not([type="range"]):not([type="date"]):focus { outline: none; border-color: #10B981; box-shadow: 0 0 0 3px rgba(16,185,129,0.12); }
+    input:not([type="range"]):not([type="date"]):focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(16,185,129,0.12); }
     input:not([type="range"]):not([type="date"]):disabled { opacity: 0.5; cursor: default; }
     .tab-btn {
       font-size: 0.82rem;
@@ -64,35 +133,35 @@
       border-radius: 0.5rem 0.5rem 0 0;
       cursor: pointer;
       transition: all 0.2s;
-      color: #64748B;
+      color: var(--text-muted);
       background: transparent;
       border: none;
       border-bottom: 2px solid transparent;
     }
-    .tab-btn.active { color: #10B981; border-bottom-color: #10B981; background: rgba(16,185,129,0.06); }
-    .tab-btn:hover:not(.active) { color: #059669; }
+    .tab-btn.active { color: var(--green); border-bottom-color: var(--green); background: rgba(16,185,129,0.06); }
+    .tab-btn:hover:not(.active) { color: var(--green-hover); }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
     .card {
-      background: #FFFFFF;
+      background: var(--bg-card);
       border: none;
       border-radius: 1rem;
       padding: 1.5rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: var(--shadow-card);
     }
-    .text-label { color: #64748B; }
-    .text-profit { color: #10B981; }
-    .badge-profit { background: #D1FAE5; color: #065F46; display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
-    .badge-loss { background: #FEE2E2; color: #991B1B; display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+    .text-label { color: var(--text-secondary); }
+    .text-profit { color: var(--green); }
+    .badge-profit { background: var(--badge-profit-bg); color: var(--badge-profit-text); display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+    .badge-loss { background: var(--badge-loss-bg); color: var(--badge-loss-text); display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
     .card-green {
-      background: #FFFFFF;
+      background: var(--bg-card);
       border: none;
       border-radius: 1rem;
       padding: 1.5rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: var(--shadow-card);
     }
     .btn-primary {
-      background: #10B981;
+      background: var(--green);
       color: #FFFFFF;
       border: none;
       font-weight: 700;
@@ -102,67 +171,134 @@
       font-size: 0.9rem;
       transition: background 0.2s, transform 0.1s;
     }
-    .btn-primary:hover { background: #059669; }
+    .btn-primary:hover { background: var(--green-hover); }
     .btn-primary:active { transform: scale(0.97); }
     .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
-    .chart-card { background: #FFFFFF; }
-    .btn-danger { background: #EF4444; color: #FFFFFF; border: none; font-weight: 700; padding: 0.65rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; transition: background 0.2s, transform 0.1s; }
-    .btn-danger:hover { background: #DC2626; }
+    .chart-card { background: var(--bg-card); }
+    .btn-danger { background: var(--red); color: #FFFFFF; border: none; font-weight: 700; padding: 0.65rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; transition: background 0.2s, transform 0.1s; }
+    .btn-danger:hover { background: var(--red-hover); }
     .btn-danger:active { transform: scale(0.97); }
-    .stat-label { font-size: 0.7rem; letter-spacing: 0.04em; color: #64748B; font-weight: 600; }
+    .btn-secondary { background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-default); font-weight: 700; padding: 0.65rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; transition: border-color 0.2s, transform 0.1s; }
+    .btn-secondary:hover { border-color: var(--border-hover); }
+    .btn-secondary:active { transform: scale(0.97); }
+    .stat-label { font-size: 0.7rem; letter-spacing: 0.04em; color: var(--text-secondary); font-weight: 600; }
     .stat-card {
-      background: #FFFFFF;
-      border: 1px solid #F1F5F9;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
       border-radius: 0.75rem;
       padding: 1rem 1.2rem;
       transition: border-color 0.2s, box-shadow 0.2s;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      box-shadow: var(--shadow-stat);
     }
-    .stat-card:hover { border-color: #CBD5E1; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .stat-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-stat-hover); }
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
-    th { text-align: left; padding: 0.6rem 0.8rem; color: #64748B; font-weight: 600; text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.05em; border-bottom: 1px solid #E2E8F0; }
-    td { padding: 0.55rem 0.8rem; border-bottom: 1px solid #F1F5F9; }
-    tr:nth-child(even) td { background: rgba(241,245,249,0.5); }
+    th { text-align: left; padding: 0.6rem 0.8rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.05em; border-bottom: 1px solid var(--border-default); }
+    td { padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--border-light); }
+    tr:nth-child(even) td { background: var(--bg-table-stripe); }
     .day-card {
-      background: #FFFFFF;
-      border: 1px solid #F1F5F9;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
       border-radius: 0.75rem;
       padding: 0.9rem 1.5rem;
       display: flex;
       align-items: center;
       gap: 1.25rem;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      box-shadow: var(--shadow-stat);
     }
-    .day-card:hover { border-color: #CBD5E1; }
+    .day-card:hover { border-color: var(--border-hover); }
     .day-num {
       width: 2.4rem; height: 2.4rem;
       border-radius: 0.6rem;
-      background: #F8FAFC;
-      border: 1px solid #E2E8F0;
+      background: var(--bg-day-num);
+      border: 1px solid var(--border-default);
       display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 0.85rem; color: #64748B;
+      font-weight: 700; font-size: 0.85rem; color: var(--text-secondary);
       flex-shrink: 0;
     }
-    .cal-dia { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 0.6rem; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: background 0.15s, border-color 0.15s; border: 1.5px solid transparent; color: #1E293B; background: transparent; user-select: none; }
-    .cal-dia:hover { background: #F1F5F9; border-color: #CBD5E1; }
-    .cal-dia.other-month { color: #CBD5E1; opacity: 0.5; }
-    .cal-dia.today { border-color: #10B981; }
-    .cal-dia.selected { background: #10B981; border-color: #10B981; color: #fff; }
+    .cal-dia { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 0.6rem; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: background 0.15s, border-color 0.15s; border: 1.5px solid transparent; color: var(--cal-color); background: transparent; user-select: none; }
+    .cal-dia:hover { background: var(--cal-bg-hover); border-color: var(--border-hover); }
+    .cal-dia.other-month { color: var(--cal-other); opacity: 0.5; }
+    .cal-dia.today { border-color: var(--green); }
+    .cal-dia.selected { background: var(--green); border-color: var(--green); color: #fff; }
     .cal-dia.selected .dia-num { color: #fff; }
     .cal-dia .dia-num { font-weight: 700; font-size: 0.85rem; line-height: 1; }
-    .cal-dia.positivo { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.25); }
-    .cal-dia.negativo { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.25); }
-    .cal-dia.positivo:hover { background: rgba(16,185,129,0.2); }
-    .cal-dia.negativo:hover { background: rgba(239,68,68,0.2); }
+    .cal-dia.positivo { background: rgba(0,255,135,0.1); border-color: rgba(0,255,135,0.25); }
+    .cal-dia.negativo { background: rgba(255,42,109,0.1); border-color: rgba(255,42,109,0.25); }
+    .cal-dia.positivo:hover { background: rgba(0,255,135,0.2); }
+    .cal-dia.negativo:hover { background: rgba(255,42,109,0.2); }
+    body.dark-mode .cal-dia.positivo { background: rgba(0,255,135,0.15); border-color: rgba(0,255,135,0.35); }
+    body.dark-mode .cal-dia.negativo { background: rgba(255,42,109,0.15); border-color: rgba(255,42,109,0.35); }
+    body.dark-mode .cal-dia.today { border-color: #10B981 !important; }
+    body.dark-mode .cal-dia.selected { background: #10B981 !important; border-color: #10B981 !important; }
 
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #F1F5F9; }
-    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+    ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
     @keyframes slide-in { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
     .animate-slide-in { animation: slide-in 0.25s ease-out; }
     .calc-btn:active { transform: scale(0.94); }
     .calc-btn:hover { filter: brightness(1.15); }
+    body.dark-mode .calc-btn { color: var(--btn-neutral-text) !important; background: var(--btn-neutral-bg) !important; }
+    body.dark-mode .calc-btn:hover { background: var(--btn-neutral-hover) !important; }
+    body.dark-mode .calc-btn[data-calc="/"],
+    body.dark-mode .calc-btn[data-calc="*"],
+    body.dark-mode .calc-btn[data-calc="-"] { background: #2B2D31 !important; color: #FE0032 !important; }
+    body.dark-mode #headerLogoutBtn { background: #FE0032 !important; }
+    body.dark-mode .calc-btn[data-calc="="],
+    body.dark-mode .calc-btn[data-calc="+"] { background: #10B981 !important; color: #FFFFFF !important; }
+    body.dark-mode #calcClear, body.dark-mode #calcBackspace { background: var(--btn-neutral-bg) !important; border-color: var(--border-default) !important; color: var(--btn-neutral-text) !important; }
+    body.dark-mode #calcNotas { background: var(--bg-input) !important; border-color: var(--border-default) !important; color: var(--text-primary) !important; }
+    body.dark-mode #calcNotas::placeholder { color: var(--text-muted) !important; }
+    /* Dark mode overrides for Tailwind classes used inline */
+    body.dark-mode .bg-white { background: var(--bg-card) !important; }
+    body.dark-mode .text-slate-800 { color: var(--text-primary) !important; }
+    body.dark-mode .text-slate-400 { color: var(--text-muted) !important; }
+    body.dark-mode .text-slate-50 { color: var(--text-primary) !important; }
+    body.dark-mode .border-gray-200 { border-color: var(--border-default) !important; }
+    body.dark-mode .ring-slate-200 { --tw-ring-color: var(--border-default) !important; }
+    body.dark-mode .text-slate-600 { color: var(--text-secondary) !important; }
+    body.dark-mode .text-slate-500 { color: var(--text-muted) !important; }
+    body.dark-mode .text-slate-700 { color: var(--text-primary) !important; }
+    body.dark-mode .placeholder-slate-400::placeholder { color: var(--text-muted) !important; }
+    body.dark-mode .border-slate-200 { border-color: var(--border-default) !important; }
+    body.dark-mode .bg-slate-50 { background: var(--bg-card) !important; }
+    body.dark-mode .text-slate-300 { color: var(--text-muted) !important; }
+    body.dark-mode .hover\:bg-slate-100:hover { background: var(--cal-bg-hover) !important; }
+    body.dark-mode .hover\:text-slate-800:hover { color: var(--text-primary) !important; }
+    body.dark-mode .border-slate-300 { border-color: var(--border-hover) !important; }
+    body.dark-mode .bg-slate-100 { background: var(--cal-bg-hover) !important; }
+    body.dark-mode .toast-el { background: var(--bg-card) !important; color: var(--text-primary) !important; }
+    body.dark-mode .shadow-lg { box-shadow: var(--shadow-card) !important; }
+    body.dark-mode #confirmMsg { color: var(--text-primary) !important; }
+    body.dark-mode #headerUserEmail { color: var(--text-muted) !important; }
+    body.dark-mode .text-red-500 { color: var(--red) !important; }
+    body.dark-mode #visaoPlacar .text-red-500,
+    body.dark-mode #projecaoPlacar .text-red-500 { color: #FF3B30 !important; }
+    body.dark-mode .border-b.border-gray-800 { border-color: var(--border-default) !important; }
+    body.dark-mode header h1 span.text-slate-400,
+    body.dark-mode h1 span.text-slate-400 { color: #FFFFFF !important; }
+    body.dark-mode .tab-btn:not(.active) { color: #A1A1AA !important; }
+    body.dark-mode .text-slate-600 { color: var(--text-secondary) !important; }
+    body.dark-mode .text-slate-700 { color: var(--text-primary) !important; }
+    body.dark-mode .text-gray-300 { color: var(--text-secondary) !important; }
+    body.dark-mode .text-gray-400 { color: var(--text-muted) !important; }
+    body.dark-mode .border-gray-300 { border-color: var(--border-hover) !important; }
+    body.dark-mode .bg-gray-50 { background: var(--bg-card) !important; }
+    body.dark-mode .hover\:bg-gray-100:hover { background: var(--cal-bg-hover) !important; }
+    body.dark-mode thead tr th { color: var(--text-muted) !important; border-bottom-color: var(--border-default) !important; }
+    body.dark-mode tbody tr td { border-bottom-color: var(--border-light) !important; }
+    body.dark-mode tbody tr:nth-child(even) td { background: var(--bg-table-stripe) !important; }
+    body.dark-mode .text-profit { color: var(--green) !important; }
+    body.dark-mode .text-teal-500 { color: var(--green) !important; }
+    body.dark-mode #chartTitleIcon { stroke: var(--green) !important; }
+    body.dark-mode #chartMediaLabel { color: var(--yellow) !important; }
+    body.dark-mode #dispStopWin { color: var(--green) !important; }
+    body.dark-mode .btn-primary { background: #10B981 !important; }
+    body.dark-mode .btn-primary:hover { background: #059669 !important; }
+    body.dark-mode .btn-danger { background: #EF4444 !important; }
+    body.dark-mode .btn-danger:hover { background: #DC2626 !important; }
+    body.dark-mode .btn-secondary { background: var(--btn-neutral-bg) !important; border-color: var(--border-default) !important; color: var(--btn-neutral-text) !important; }
     @media (max-width: 768px) {
       .card, .card-green { padding: 1rem; }
       .stat-card { padding: 0.75rem 1rem; }
@@ -200,6 +336,7 @@
         <input id="loginEmail" type="email" placeholder="E-mail" class="w-full mb-3 px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:border-[#10B981]">
         <input id="loginSenha" type="password" placeholder="Senha" class="w-full mb-4 px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:border-[#10B981]">
         <button id="loginBtn" class="w-full py-2.5 rounded-lg font-semibold text-sm text-white" style="background:#10B981">Entrar</button>
+        <p class="mt-2 text-center"><button id="esqueciSenhaBtn" class="text-[#10B981] hover:underline bg-transparent border-none p-0 cursor-pointer text-xs">Esqueci minha senha?</button></p>
         <p class="mt-3 text-center text-xs text-slate-400">Não tem conta? <button id="mostrarCadastroBtn" class="text-[#10B981] hover:underline bg-transparent border-none p-0 cursor-pointer text-xs">Cadastrar</button></p>
       </div>
       <div id="cadastroForm" class="hidden">
@@ -221,7 +358,7 @@
         <div id="userArea" class="hidden flex items-center gap-2 flex-shrink-0">
           <span id="headerUserEmail" class="hidden sm:block text-xs text-[#94A3B8]"></span>
           <button id="themeToggleBtn" class="p-1.5 sm:p-2 rounded-lg text-sm leading-none transition" style="background:#FFFFFF;border:1px solid #E2E8F0;cursor:pointer" title="Alternar tema">☀️</button>
-          <button id="headerLogoutBtn" class="px-2 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold text-white whitespace-nowrap" style="background:#EF4444;">Sair</button>
+          <button id="headerLogoutBtn" class="px-2 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold text-white whitespace-nowrap" style="background:#FE0032;">Sair</button>
         </div>
       </div>
     </div>
@@ -275,12 +412,24 @@
             <div class="text-lg sm:text-xl font-bold mt-0.5" id="visaoVariacao">+0,0%</div>
           </div>
         </div>
+        <div class="border-t border-slate-100 mt-4 pt-4">
+          <div class="grid grid-cols-2 gap-3 sm:gap-4 text-center">
+            <div>
+              <span class="stat-label">Lucro Total</span>
+              <div class="text-lg sm:text-xl font-bold text-profit mt-0.5" id="visaoLucroTotal">R$ 0,00</div>
+            </div>
+            <div>
+              <span class="stat-label">Valor Sacado</span>
+              <div class="text-lg sm:text-xl font-bold text-slate-800 mt-0.5" id="visaoValorSacado">R$ 0,00</div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="card chart-card">
           <div class="flex items-center justify-between mb-4 gap-3">
             <div class="flex items-center gap-2 min-w-0">
               <svg id="chartTitleIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-              <h2 class="text-sm font-bold text-slate-800 whitespace-nowrap">Evolução da Banca</h2>
+              <h2 class="text-sm font-bold text-slate-800 whitespace-nowrap">Evolução do Capital</h2>
             </div>
             <div class="flex items-center gap-2 text-[11px] font-semibold flex-shrink-0 text-slate-400">
               <span>Início <span id="chartLabelInicio">R$ 1.000,00</span></span>
@@ -290,7 +439,7 @@
           <div class="flex items-center gap-2 mb-3 text-[11px] font-semibold px-1 text-slate-400">
             <span>Resultado (R$)</span>
             <span id="chartPercentBadge" style="display:none"></span>
-            <span id="chartMediaLabel" style="color:#F59E0B;font-weight:600;display:none">Média</span>
+            <span id="chartMediaLabel" style="color:var(--yellow);font-weight:600;display:none">Média</span>
           </div>
           <div class="relative h-48 sm:h-80">
             <canvas id="chartDiario"></canvas>
@@ -303,12 +452,37 @@
             <div class="text-lg sm:text-xl font-bold mt-0.5" id="visaoPlacar"><span class="text-profit">0</span> x <span class="text-red-500">0</span></div>
           </div>
           <div>
-            <span class="stat-label">Total de Operações</span>
+            <span class="stat-label">Negociações</span>
             <div class="text-lg sm:text-xl font-bold text-slate-800 mt-0.5" id="visaoTotalOps">0</div>
           </div>
           <div>
             <span class="stat-label">Win Rate</span>
             <div class="text-lg sm:text-xl font-bold mt-0.5" id="visaoWinRate">0,0%</div>
+          </div>
+        </div>
+      </div>
+      <div class="card mt-5">
+        <h2 class="text-sm font-bold text-slate-800 mb-1 flex items-center gap-1.5">📊 Comparação Lucro x Saques</h2>
+        <p class="text-xs text-gray-500 mb-4">Distribuição entre o lucro total acumulado e o valor sacado da conta.</p>
+        <div class="relative h-48 sm:h-56">
+          <canvas id="chartLucroSaque"></canvas>
+        </div>
+      </div>
+      <div class="card mt-5">
+        <h2 class="text-sm font-bold text-slate-800 mb-1 flex items-center gap-1.5">💰 Saques do Mês</h2>
+        <p class="text-xs text-gray-500 mb-4">Saques registrados na Projeção Diária. O valor sacado é descontado do capital e afeta o valor por trade e as projeções.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div class="stat-card border-l-4 border-l-slate-700">
+            <div class="stat-label">Total Sacado no Mês</div>
+            <div class="text-lg sm:text-xl font-bold text-slate-800 mt-1" id="dashSaqueTotal">R$ 0,00</div>
+          </div>
+          <div class="stat-card border-l-4 border-l-slate-700">
+            <div class="stat-label">Saque Semanal</div>
+            <div class="text-lg sm:text-xl font-bold text-slate-800 mt-1" id="dashSaqueSemanal">R$ 0,00</div>
+          </div>
+          <div class="stat-card border-l-4 border-l-slate-700">
+            <div class="stat-label">Saque Mensal</div>
+            <div class="text-lg sm:text-xl font-bold text-slate-800 mt-1" id="dashSaqueMensal">R$ 0,00</div>
           </div>
         </div>
       </div>
@@ -358,7 +532,7 @@
             </div>
             <div>
               <label class="stat-label block mb-1.5">Meta de Lucro (%)</label>
-              <input type="number" id="cfgMetaLucro" value="20" min="1" max="500" step="1" />
+              <input type="number" id="cfgMetaLucro" value="20" min="1" max="1000" step="1" />
             </div>
             <div>
               <label class="stat-label block mb-1.5">% por Trade</label>
@@ -389,7 +563,7 @@
             <div class="text-lg sm:text-xl font-bold mt-0.5" id="projecaoPlacar"><span class="text-profit">0</span> x <span class="text-red-500">0</span></div>
           </div>
           <div>
-            <span class="stat-label">Operações</span>
+            <span class="stat-label">Negociações</span>
             <div class="text-lg sm:text-xl font-bold text-slate-800 mt-0.5" id="projecaoTotalOps">0</div>
           </div>
           <div>
@@ -408,6 +582,7 @@
             <button id="diarioMesSeguinte" class="text-slate-400 hover:text-slate-800 transition p-1" style="touch-action:manipulation">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
+            <button id="diarioHojeBtn" class="btn-secondary text-xs px-3 py-1.5" title="Voltar para o mês atual">Hoje</button>
           </div>
           <h2 class="text-sm font-bold text-slate-800" id="diarioFormTitle">Adicionar Dia</h2>
         </div>
@@ -428,10 +603,112 @@
             <label class="stat-label block mb-1">Resultado (R$)</label>
             <input type="text" id="novoResultado" value="" inputmode="decimal" placeholder="ex: 120,00" />
           </div>
+          <button class="btn-secondary h-[42px]" id="calcularResultadoBtn" title="Calcula o resultado usando a config (valor por trade, stop win/loss)">Calcular Resultado</button>
           <button class="btn-primary h-[42px]" id="adicionarDiaBtn">Adicionar Dia</button>
           <button class="btn-danger h-[42px]" id="cancelarDiaBtn" style="display:none">Cancelar</button>
         </div>
         <div id="diarioLista"></div>
+      </div>
+      <div class="card mt-5">
+        <h2 class="text-sm font-bold text-slate-800 mb-1 flex items-center gap-1.5">💰 Saques</h2>
+        <p class="text-xs text-gray-500 mb-4">Registre os saques realizados (semanal ou mensal). O saque é descontado do capital atual, afetando os cálculos de valor por trade e projeções.</p>
+        <div class="flex flex-wrap items-end gap-3 mb-5 p-4 rounded-lg bg-gray-50 border border-gray-200">
+          <div class="flex-1 min-w-[80px]">
+            <label class="stat-label block mb-1">Dia</label>
+            <input type="number" id="novoSaqueDia" value="" min="1" max="31" placeholder="ex: 1-31" />
+          </div>
+          <div class="flex-1 min-w-[110px]">
+            <label class="stat-label block mb-1">Saque Semanal (R$)</label>
+            <input type="text" id="novoSaqueSemanal" value="" inputmode="decimal" placeholder="ex: 140,00" />
+          </div>
+          <div class="flex-1 min-w-[110px]">
+            <label class="stat-label block mb-1">Saque Mensal (R$)</label>
+            <input type="text" id="novoSaqueMensal" value="" inputmode="decimal" placeholder="ex: 558,00" />
+          </div>
+          <button class="btn-primary h-[42px]" id="adicionarSaqueBtn">Adicionar Saques</button>
+        </div>
+        <div id="saqueLista"></div>
+      </div>
+      <div class="card mt-5">
+        <h2 class="text-sm font-bold text-slate-800 mb-1 flex items-center gap-1.5">💸 Projeção de Saque sobre o Lucro</h2>
+        <p class="text-xs text-gray-500 mb-4">Calculada com base no lucro líquido registrado na Projeção Diária do mês selecionado. Saque de 30% a 50% do lucro, reinvestindo o restante.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="stat-card border-l-4 border-l-slate-700">
+            <div class="stat-label">Lucro do Mês (Projeção Diária)</div>
+            <div class="text-lg sm:text-xl font-bold mt-1" id="projLucroMensal" style="color:#10B981">R$ 0,00</div>
+            <div class="text-xs text-gray-500 mt-0.5" id="projLucroMensalPct">0,0% sobre o capital</div>
+          </div>
+          <div class="stat-card border-l-4 border-l-slate-700">
+            <div class="stat-label">Saque Semanal Recomendado</div>
+            <div class="text-lg sm:text-xl font-bold text-slate-800 mt-1" id="projMetaSaque">R$ 0,00</div>
+            <div class="text-xs text-gray-500 mt-0.5" id="projMetaSaqueFaixa">10% a 12% do lucro do mês</div>
+          </div>
+          <div class="stat-card border-l-4 border-l-slate-700">
+            <div class="stat-label">Saque Mensal Recomendado</div>
+            <div class="text-lg sm:text-xl font-bold text-slate-800 mt-1" id="projSaqueMensal">R$ 0,00</div>
+            <div class="text-xs text-gray-500 mt-0.5">30% a 50% do lucro do mês</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+          <div class="card-green">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xs font-bold text-slate-800">Cenário 1, Conservador (30%)</h3>
+              <span class="badge-profit">Reinvestimento agressivo</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div>
+                <div class="stat-label">Saque Mensal</div>
+                <div class="text-base font-bold text-slate-800 mt-0.5" id="projC1Saque">R$ 0,00</div>
+              </div>
+              <div>
+                <div class="stat-label">Reinvestir</div>
+                <div class="text-base font-bold text-slate-800 mt-0.5" id="projC1Reinveste">R$ 0,00</div>
+              </div>
+              <div>
+                <div class="stat-label">Novo Capital</div>
+                <div class="text-base font-bold text-profit mt-0.5" id="projC1Capital">R$ 0,00</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-green">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xs font-bold text-slate-800">Cenário 2, Moderado (50%)</h3>
+              <span class="badge-profit">Equilíbrio ideal</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div>
+                <div class="stat-label">Saque Mensal</div>
+                <div class="text-base font-bold text-slate-800 mt-0.5" id="projC2Saque">R$ 0,00</div>
+              </div>
+              <div>
+                <div class="stat-label">Reinvestir</div>
+                <div class="text-base font-bold text-slate-800 mt-0.5" id="projC2Reinveste">R$ 0,00</div>
+              </div>
+              <div>
+                <div class="stat-label">Novo Capital</div>
+                <div class="text-base font-bold text-profit mt-0.5" id="projC2Capital">R$ 0,00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 gap-3 mt-4">
+          <div class="card-green">
+            <h3 class="text-xs font-bold text-slate-800 mb-2">🛡️ Proteção do Capital</h3>
+            <p class="text-xs text-gray-500 mb-2">Nunca sacar o capital inicial até atingir a meta de lucro. O saque deve vir exclusivamente dos lucros.</p>
+            <div class="flex items-center justify-between py-1.5 border-t border-gray-100">
+              <span class="text-xs text-gray-500">Capital atual</span>
+              <span class="text-sm font-bold text-slate-800" id="projProtCapital">R$ 0,00</span>
+            </div>
+            <div class="flex items-center justify-between py-1.5 border-t border-gray-100">
+              <span class="text-xs text-gray-500">Meta de lucro</span>
+              <span class="text-sm font-bold text-slate-800" id="projProtMeta">R$ 0,00</span>
+            </div>
+            <div class="flex items-center justify-between py-1.5 border-t border-gray-100">
+              <span class="text-xs text-gray-500">Falta para liberar</span>
+              <span class="text-sm font-bold" id="projProtFalta" style="color:#EF4444">R$ 0,00</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -447,9 +724,12 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
               </button>
               <h2 class="text-sm font-bold text-slate-800" id="calMesLabel">Janeiro 2026</h2>
-              <button id="calMesSeguinte" class="text-slate-400 hover:text-slate-800 transition p-1" style="touch-action:manipulation">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-              </button>
+              <div class="flex items-center gap-2">
+                <button id="calHojeBtn" class="btn-secondary text-xs px-3 py-1.5" title="Voltar para o mês atual">Hoje</button>
+                <button id="calMesSeguinte" class="text-slate-400 hover:text-slate-800 transition p-1" style="touch-action:manipulation">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
             </div>
             <div class="grid grid-cols-7 gap-1.5 text-center text-xs font-semibold text-[#94A3B8] mb-2">
               <div class="py-1">DOM</div>
@@ -469,7 +749,7 @@
             <div class="grid grid-cols-2 gap-3 mb-4">
               <div><span class="stat-label">Total Acertos</span><div class="text-base font-bold text-profit" id="resumoTotalAcertos">0</div></div>
               <div><span class="stat-label">Total Erros</span><div class="text-base font-bold text-red-500" id="resumoTotalErros">0</div></div>
-              <div><span class="stat-label">Total Operações</span><div class="text-base font-bold text-slate-800" id="resumoTotalOpsCal">0</div></div>
+              <div><span class="stat-label">Negociações</span><div class="text-base font-bold text-slate-800" id="resumoTotalOpsCal">0</div></div>
               <div><span class="stat-label">Resultado</span><div class="text-base font-bold" id="resumoTotalResultado">R$ 0,00</div></div>
             </div>
             <hr class="border-t border-gray-200 my-4">
@@ -499,15 +779,15 @@
             <button class="calc-btn text-lg font-semibold" style="background:#F1F5F9;color:#1E293B;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="7">7</button>
             <button class="calc-btn text-lg font-semibold" style="background:#F1F5F9;color:#1E293B;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="8">8</button>
             <button class="calc-btn text-lg font-semibold" style="background:#F1F5F9;color:#1E293B;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="9">9</button>
-            <button class="calc-btn text-lg font-semibold" style="background:#EF4444;color:#FFFFFF;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="/">÷</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#FE0032;color:#FFFFFF;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="/">÷</button>
             <button class="calc-btn text-lg font-semibold" style="background:#F1F5F9;color:#1E293B;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="4">4</button>
             <button class="calc-btn text-lg font-semibold" style="background:#F1F5F9;color:#1E293B;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="5">5</button>
             <button class="calc-btn text-lg font-semibold" style="background:#F1F5F9;color:#1E293B;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="6">6</button>
-            <button class="calc-btn text-lg font-semibold" style="background:#EF4444;color:#FFFFFF;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="*">×</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#FE0032;color:#FFFFFF;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="*">×</button>
             <button class="calc-btn text-lg font-semibold" style="background:#F1F5F9;color:#1E293B;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="1">1</button>
             <button class="calc-btn text-lg font-semibold" style="background:#F1F5F9;color:#1E293B;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="2">2</button>
             <button class="calc-btn text-lg font-semibold" style="background:#F1F5F9;color:#1E293B;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="3">3</button>
-            <button class="calc-btn text-lg font-semibold" style="background:#EF4444;color:#FFFFFF;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="-">−</button>
+            <button class="calc-btn text-lg font-semibold" style="background:#FE0032;color:#FFFFFF;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="-">−</button>
             <button class="calc-btn text-lg font-semibold" style="background:#F1F5F9;color:#1E293B;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="0">0</button>
             <button class="calc-btn text-lg font-semibold" style="background:#F1F5F9;color:#1E293B;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc=".">,</button>
             <button class="calc-btn text-lg font-semibold" style="background:#10B981;color:#FFFFFF;border:none;border-radius:0.5rem;padding:0.8rem 0;cursor:pointer;transition:background 0.15s" data-calc="=">=</button>
@@ -536,10 +816,10 @@
     const toastContainer = document.getElementById('toastContainer');
 
     function mostrarToast(msg, tipo) {
-      const cores = { erro: '#EF4444', sucesso: '#10B981', aviso: '#94A3B8' };
+      const cores = { erro: '#FF2A6D', sucesso: '#00FF87', aviso: '#94A3B8' };
       const cor = cores[tipo] || '#94A3B8';
       const el = document.createElement('div');
-      el.className = 'flex items-center gap-3 px-4 py-3 rounded-lg border text-sm font-medium shadow-lg animate-slide-in';
+      el.className = 'toast-el flex items-center gap-3 px-4 py-3 rounded-lg border text-sm font-medium shadow-lg animate-slide-in';
       el.style.cssText = 'background:#FFFFFF;border-color:' + cor + ';color:#1E293B;border-width:1px;';
       el.innerHTML = '<span style="color:' + cor + '">●</span> ' + msg;
       toastContainer.style.display = 'flex';
@@ -576,24 +856,47 @@
 
     let usuarioAtual = null;
 
+    function chaveUsuario(sufixo) {
+      return sufixo + '_' + (usuarioAtual ? usuarioAtual.uid : 'anon');
+    }
+
     // ================================================================
     // THEME TOGGLE
     // ================================================================
     function aplicarTema(tema) {
-      if (tema === 'dark') {
-        document.body.classList.add('dark-mode');
-        document.getElementById('themeToggleBtn').textContent = '🌙';
-        document.getElementById('themeToggleBtn').style.background = '#1E293B';
-        document.getElementById('themeToggleBtn').style.borderColor = '#334155';
-      } else {
-        document.body.classList.remove('dark-mode');
-        document.getElementById('themeToggleBtn').textContent = '☀️';
-        document.getElementById('themeToggleBtn').style.background = '#FFFFFF';
-        document.getElementById('themeToggleBtn').style.borderColor = '#E2E8F0';
+      const isDark = tema === 'dark';
+      document.body.classList.toggle('dark-mode', isDark);
+      document.querySelector('meta[name="theme-color"]').content = isDark ? '#000000' : '#F8FAFC';
+      document.getElementById('themeToggleBtn').textContent = isDark ? '🌙' : '☀️';
+      document.getElementById('themeToggleBtn').style.background = isDark ? '#0A0A0A' : '#FFFFFF';
+      document.getElementById('themeToggleBtn').style.borderColor = isDark ? '#27272A' : '#E2E8F0';
+      const loginOverlay = document.getElementById('loginOverlay');
+      if (loginOverlay) loginOverlay.style.background = isDark ? '#000000' : '#F8FAFC';
+      if (chartDiario) {
+        const tc = isDark ? '#94A3B8' : '#94A3B8';
+        const gc = isDark ? 'rgba(148,163,184,0.15)' : 'rgba(148,163,184,0.2)';
+        chartDiario.options.scales.x.ticks.color = tc;
+        chartDiario.options.scales.y.ticks.color = tc;
+        chartDiario.options.scales.y.grid.color = gc;
+        chartDiario.options.plugins.tooltip.backgroundColor = isDark ? '#0A0A0A' : '#FFFFFF';
+        chartDiario.options.plugins.tooltip.titleColor = isDark ? '#FFFFFF' : '#1E293B';
+        chartDiario.options.plugins.tooltip.bodyColor = isDark ? '#FFFFFF' : '#1E293B';
+        chartDiario.options.plugins.tooltip.borderColor = isDark ? '#27272A' : '#E2E8F0';
+        chartDiario.update();
+      }
+      if (chartLucroSaque) {
+        chartLucroSaque.options.plugins.legend.labels.color = isDark ? '#94A3B8' : '#64748B';
+        chartLucroSaque.options.plugins.tooltip.backgroundColor = isDark ? '#0A0A0A' : '#FFFFFF';
+        chartLucroSaque.options.plugins.tooltip.titleColor = isDark ? '#FFFFFF' : '#1E293B';
+        chartLucroSaque.options.plugins.tooltip.bodyColor = isDark ? '#FFFFFF' : '#1E293B';
+        chartLucroSaque.options.plugins.tooltip.borderColor = isDark ? '#27272A' : '#E2E8F0';
+        chartLucroSaque.update();
       }
       localStorage.setItem('gestaoTema', tema);
     }
 
+    let chartDiario = null;
+    let chartLucroSaque = null;
     const temaSalvo = localStorage.getItem('gestaoTema') || 'light';
     aplicarTema(temaSalvo);
 
@@ -617,6 +920,17 @@
         document.getElementById('loginBtn').disabled = false;
         document.getElementById('loginBtn').textContent = 'Entrar';
         mostrarErro(e.message);
+      }
+    });
+
+    document.getElementById('esqueciSenhaBtn').addEventListener('click', async () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      if (!email) { mostrarToast('Digite seu e-mail para redefinir a senha.', 'aviso'); return; }
+      try {
+        await auth.sendPasswordResetEmail(email);
+        mostrarToast('E-mail de redefinição enviado!', 'sucesso');
+      } catch (e) {
+        mostrarToast('Erro ao enviar e-mail: ' + e.message, 'erro');
       }
     });
 
@@ -650,17 +964,20 @@
       if (!usuarioAtual) return;
       try {
         const doc = await db.collection('dados').doc(usuarioAtual.uid).get();
+        localStorage.removeItem(chaveUsuario('capitalPro'));
         if (doc.exists) {
           const data = doc.data();
           if (data.config) state.config = data.config;
           if (data.registros) state.registros = data.registros;
+          if (data.saques) state.saques = data.saques;
+          if (!state.saques) state.saques = [];
           carregarDados();
-          state.capitalAtual = state.config.valorInicial + state.registros.reduce((s, r) => s + r.resultado, 0);
-          if (state.capitalAtual < 0) state.capitalAtual = 0;
-          localStorage.setItem('capitalPro', JSON.stringify(state));
-          console.log('Firestore: dados carregados (' + state.registros.length + ' registros)');
+          recalcularCapital();
+          localStorage.setItem(chaveUsuario('capitalPro'), JSON.stringify(state));
+          console.log('Firestore: dados carregados (' + state.registros.length + ' registros, ' + state.saques.length + ' saques)');
         } else {
           console.log('Firestore: documento nao existe, enviando dados locais...');
+          limparEstado();
           salvarFirestore();
         }
       } catch (e) {
@@ -674,6 +991,7 @@
       db.collection('dados').doc(usuarioAtual.uid).set({
         config: state.config,
         registros: state.registros,
+        saques: state.saques,
       }).then(() => {
         console.log('Firestore: salvo com sucesso');
       }).catch((e) => {
@@ -687,29 +1005,29 @@
     }
 
     auth.onAuthStateChanged(async (user) => {
+      const usuarioAnterior = usuarioAtual;
       usuarioAtual = user;
       if (user) {
+        if (!usuarioAnterior || usuarioAnterior.uid !== user.uid) {
+          limparEstado();
+        }
         document.getElementById('headerUserEmail').textContent = user.email;
         document.getElementById('userArea').classList.remove('hidden');
         document.getElementById('loginForm').classList.add('hidden');
         document.getElementById('cadastroForm').classList.add('hidden');
         mostrarApp(true);
+        await carregarFirestore();
+        if (state.registros.length > 0) {
+          persistir();
+        }
         aplicarConfigNoForm(state.config);
         atualizarPaginaCapital();
         atualizarResumoDiario();
         atualizarChartDiario();
         renderizarRegistros();
         renderizarCalendario();
-        await carregarFirestore();
-        if (state.registros.length > 0) {
-          persistir();
-          aplicarConfigNoForm(state.config);
-          atualizarPaginaCapital();
-          atualizarResumoDiario();
-          atualizarChartDiario();
-          renderizarRegistros();
-          renderizarCalendario();
-        }
+        renderizarSaques();
+        atualizarSaquesDashboard();
       } else {
         mostrarApp(false);
         document.getElementById('userArea').classList.add('hidden');
@@ -725,21 +1043,31 @@
     // ================================================================
     function carregarState() {
       try {
-        const raw = localStorage.getItem('capitalPro');
+        const raw = localStorage.getItem(chaveUsuario('capitalPro'));
         if (raw) {
           const data = JSON.parse(raw);
           if (data.bancaAtual !== undefined) {
             data.capitalAtual = data.bancaAtual;
             delete data.bancaAtual;
           }
+          if (!data.saques) data.saques = [];
           return data;
         }
       } catch (_) {}
       return {
         config: { valorInicial: 1000, metaLucro: 20, porcTrade: 2, stopWin: 10, stopLoss: 5 },
         registros: [],
+        saques: [],
         capitalAtual: null,
       };
+    }
+
+    function limparEstado() {
+      state.config = { valorInicial: 1000, metaLucro: 20, porcTrade: 2, stopWin: 10, stopLoss: 5 };
+      state.registros = [];
+      state.saques = [];
+      state.capitalAtual = state.config.valorInicial;
+      localStorage.removeItem(chaveUsuario('capitalPro'));
     }
 
     const state = carregarState();
@@ -747,8 +1075,14 @@
     carregarDados();
 
     function persistir() {
-      localStorage.setItem('capitalPro', JSON.stringify(state));
+      localStorage.setItem(chaveUsuario('capitalPro'), JSON.stringify(state));
       if (usuarioAtual) salvarFirestore();
+    }
+
+    function recalcularCapital() {
+      const totalSaques = state.saques.reduce((s, x) => s + x.valor, 0);
+      state.capitalAtual = state.config.valorInicial + state.registros.reduce((s, r) => s + r.resultado, 0) - totalSaques;
+      if (state.capitalAtual < 0) state.capitalAtual = 0;
     }
 
     // ================================================================
@@ -794,11 +1128,11 @@
       return s + 'R$ ' + v.toFixed(2).replace('.', ',');
     };
     const fmtB = (v) => 'R$ ' + v.toFixed(2).replace('.', ',');
+    const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
     // ================================================================
     // CHART
     // ================================================================
-    let chartDiario = null;
 
     const zeroLinePlugin = {
       id: 'zeroLine',
@@ -833,17 +1167,21 @@
             borderRadius: 4,
             borderSkipped: false,
             order: 2,
+            maxBarThickness: 90,
+            barPercentage: 0.85,
           }, {
             label: ' Média',
             type: 'line',
             data: [],
-            borderColor: '#F59E0B',
+            borderColor: '#F1C40F',
             backgroundColor: 'transparent',
             borderWidth: 2,
             pointRadius: 0,
             pointHitRadius: 10,
             cubicInterpolationMode: 'monotone',
-            tension: 0.4,
+            tension: 0.45,
+            borderCapStyle: 'round',
+            borderJoinStyle: 'round',
             fill: false,
             order: 1,
           }]
@@ -867,8 +1205,15 @@
                   if (ctx.datasetIndex === 0) return 'Resultado: ' + fmtB(ctx.parsed.y);
                   const sorted = [...state.registros].sort((a, b) => a.dia - b.dia);
                   let cap = state.config.valorInicial;
-                  for (let i = 0; i <= ctx.dataIndex; i++) cap += sorted[i].resultado;
-                  return 'Capital: ' + fmtB(cap);
+                  let saquesAcum = 0;
+                  for (let i = 0; i <= ctx.dataIndex; i++) {
+                    const r = sorted[i];
+                    cap += r.resultado;
+                    for (const s of state.saques) {
+                      if (s.mes < r.mes || (s.mes === r.mes && s.dia <= r.dia)) saquesAcum += s.valor;
+                    }
+                  }
+                  return 'Capital: ' + fmtB(cap - saquesAcum);
                 },
               },
             }
@@ -885,6 +1230,54 @@
       document.getElementById('chartLabelAtual').textContent = fmtB(state.config.valorInicial);
     }
 
+    function initChartLucroSaque() {
+      const ctx = document.getElementById('chartLucroSaque').getContext('2d');
+      chartLucroSaque = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Lucro Total', 'Valor Sacado'],
+          datasets: [{
+            data: [0, 0],
+            backgroundColor: ['#10B981', '#FF2A6D'],
+            borderWidth: 0,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#64748B', padding: 14, font: { size: 14 } }
+            },
+            tooltip: {
+              backgroundColor: '#FFFFFF',
+              titleColor: '#1E293B',
+              bodyColor: '#1E293B',
+              borderColor: '#E2E8F0',
+              borderWidth: 1,
+              padding: 10,
+              callbacks: {
+                label: (ctx) => {
+                  const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                  const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
+                  return 'R$ ' + ctx.parsed.toFixed(2).replace('.', ',') + ' (' + pct + '%)';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function atualizarChartLucroSaque() {
+      if (!chartLucroSaque) return;
+      const lucro = state.registros.reduce((s, r) => s + r.resultado, 0);
+      const sacado = state.saques.reduce((s, x) => s + x.valor, 0);
+      chartLucroSaque.data.datasets[0].data = [lucro, sacado];
+      chartLucroSaque.update('none');
+    }
+
     function atualizarChartDiario() {
       if (!chartDiario) return;
       const sorted = [...state.registros].sort((a, b) => a.dia - b.dia);
@@ -894,13 +1287,11 @@
       for (const r of sorted) {
         labels.push('Dia ' + r.dia);
         data.push(r.resultado);
-        cores.push(r.resultado >= 0 ? '#10B981' : '#EF4444');
+        cores.push(r.resultado >= 0 ? '#00FF87' : '#FF2A6D');
       }
       const sma = [];
       for (let i = 0; i < data.length; i++) {
-        if (i === 0) sma.push(data[0]);
-        else if (i === 1) sma.push((data[0] + data[1]) / 2);
-        else sma.push((data[i] + data[i - 1] + data[i - 2]) / 3);
+        sma.push(data[i] / 2);
       }
       chartDiario.data.labels = labels;
       chartDiario.data.datasets[0].data = data;
@@ -1003,7 +1394,13 @@
       visaoCapitalAtual.textContent = fmtB(capitalAtual);
       const elVariacao = document.getElementById('visaoVariacao');
       elVariacao.textContent = (variacao >= 0 ? '+' : '') + variacao.toFixed(1) + '%';
-      elVariacao.style.color = variacao >= 0 ? '#10B981' : '#EF4444';
+      elVariacao.className = 'text-lg sm:text-xl font-bold mt-0.5 ' + (variacao >= 0 ? 'text-profit' : 'text-red-500');
+      const lucroTotal = state.registros.reduce((s, r) => s + r.resultado, 0);
+      const totalSacado = state.saques.reduce((s, x) => s + x.valor, 0);
+      const elLucroTotal = document.getElementById('visaoLucroTotal');
+      elLucroTotal.textContent = fmtB(lucroTotal);
+      elLucroTotal.className = 'text-lg sm:text-xl font-bold mt-0.5 ' + (lucroTotal >= 0 ? 'text-profit' : 'text-red-500');
+      document.getElementById('visaoValorSacado').textContent = fmtB(totalSacado);
       let totalWins = 0, totalLosses = 0;
       for (const r of state.registros) {
         totalWins += r.acertos;
@@ -1014,9 +1411,11 @@
       const placarHtml = '<span class="text-profit">' + totalWins + '</span> x <span class="text-red-500">' + totalLosses + '</span>';
       visaoPlacar.innerHTML = placarHtml;
       visaoWinRate.textContent = winRate.toFixed(1) + '%';
-      visaoWinRate.style.color = winRate >= 50 ? '#10B981' : '#EF4444';
+      visaoWinRate.className = 'text-lg sm:text-xl font-bold mt-0.5 ' + (winRate >= 50 ? 'text-profit' : 'text-red-500');
       visaoTotalOps.textContent = totalTrades;
+      atualizarChartLucroSaque();
       atualizarProjecaoDiaria();
+      atualizarProjecaoSaque();
     }
 
     function atualizarProjecaoDiaria() {
@@ -1028,12 +1427,155 @@
       }
       const totalTrades = totalWins + totalLosses;
       const winRate = totalTrades > 0 ? (totalWins / totalTrades) * 100 : 0;
-      const wrColor = winRate >= 50 ? '#10B981' : '#EF4444';
       document.getElementById('projecaoPlacar').innerHTML = '<span class="text-profit">' + totalWins + '</span> x <span class="text-red-500">' + totalLosses + '</span>';
       document.getElementById('projecaoWinRate').textContent = winRate.toFixed(1) + '%';
-      document.getElementById('projecaoWinRate').style.color = wrColor;
+      document.getElementById('projecaoWinRate').className = 'text-lg sm:text-xl font-bold mt-0.5 ' + (winRate >= 50 ? 'text-profit' : 'text-red-500');
       document.getElementById('projecaoTotalOps').textContent = totalTrades;
     }
+
+    // ================================================================
+    // PROJEÇÃO DE SAQUE SOBRE O LUCRO (baseada na Projeção Diária)
+    // ================================================================
+    function lucroMesReal() {
+      const registros = getRegistrosDoMes();
+      return registros.reduce((s, r) => s + r.resultado, 0);
+    }
+
+    function atualizarProjecaoSaque() {
+      const capitalAtual = state.capitalAtual;
+      const lucroMensal = lucroMesReal();
+      const pctCapital = capitalAtual > 0 ? (lucroMensal / capitalAtual) * 100 : 0;
+
+      const metaSaqueMin = Math.max(0, lucroMensal * 0.075);
+      const metaSaqueMax = Math.max(0, lucroMensal * 0.125);
+
+      const saque30 = Math.max(0, lucroMensal * 0.30);
+      const saque50 = Math.max(0, lucroMensal * 0.50);
+
+      const c1Saque = saque30;
+      const c1Reinveste = Math.max(0, lucroMensal) - saque30;
+      const c1Capital = capitalAtual + c1Reinveste;
+
+      const c2Saque = saque50;
+      const c2Reinveste = Math.max(0, lucroMensal) - saque50;
+      const c2Capital = capitalAtual + c2Reinveste;
+
+      const metaLucroValor = state.config.valorInicial * (state.config.metaLucro / 100);
+      const metaCapital = state.config.valorInicial + metaLucroValor;
+      const faltaDobrar = Math.max(0, metaCapital - capitalAtual);
+
+      const lucroMensalEl = document.getElementById('projLucroMensal');
+      lucroMensalEl.textContent = fmtB(lucroMensal);
+      lucroMensalEl.style.color = lucroMensal >= 0 ? '#10B981' : '#EF4444';
+      document.getElementById('projLucroMensalPct').textContent = (pctCapital >= 0 ? '+' : '') + pctCapital.toFixed(1) + '% sobre o capital';
+      document.getElementById('projMetaSaque').textContent = fmtB(metaSaqueMin) + ' a ' + fmtB(metaSaqueMax);
+      document.getElementById('projMetaSaqueFaixa').textContent = '7,5% a 12,5% do lucro do mês (30% a 50% do lucro semanal)';
+      document.getElementById('projSaqueMensal').textContent = fmtB(saque30) + ' a ' + fmtB(saque50);
+
+      document.getElementById('projC1Saque').textContent = fmtB(c1Saque);
+      document.getElementById('projC1Reinveste').textContent = fmtB(c1Reinveste);
+      document.getElementById('projC1Capital').textContent = fmtB(c1Capital);
+      document.getElementById('projC2Saque').textContent = fmtB(c2Saque);
+      document.getElementById('projC2Reinveste').textContent = fmtB(c2Reinveste);
+      document.getElementById('projC2Capital').textContent = fmtB(c2Capital);
+
+      document.getElementById('projProtCapital').textContent = fmtB(capitalAtual);
+      document.getElementById('projProtMeta').textContent = fmtB(metaLucroValor);
+      const faltaEl = document.getElementById('projProtFalta');
+      faltaEl.textContent = faltaDobrar > 0 ? fmtB(faltaDobrar) : 'Liberado ✓';
+      faltaEl.style.color = faltaDobrar > 0 ? '#EF4444' : '#10B981';
+    }
+
+    // ================================================================
+    // SAQUES (semanal/mensal): descontam do capital
+    // ================================================================
+    function getSaquesDoMes() {
+      return state.saques.filter(s => s.mes === state.mesCalendario);
+    }
+
+    function renderizarSaques() {
+      const lista = document.getElementById('saqueLista');
+      const saques = getSaquesDoMes();
+      if (saques.length === 0) {
+        lista.innerHTML = '<p class="text-gray-600 text-center py-6 text-sm">Nenhum saque registrado neste mês.</p>';
+      } else {
+        const sorted = [...saques].sort((a, b) => a.dia - b.dia);
+        let html = '<div class="space-y-2">';
+        for (const s of sorted) {
+          const tipoLabel = s.tipo === 'semanal' ? 'Semanal' : 'Mensal';
+          html += `
+            <div class="day-card">
+              <div class="day-num">${s.dia}</div>
+              <div class="flex-1 min-w-0">
+                <div class="text-xs text-[#94A3B8] font-semibold uppercase tracking-wider mb-0.5">${tipoLabel}</div>
+                <div class="text-sm font-semibold text-slate-800">${fmtB(s.valor)}</div>
+              </div>
+              <button class="del-saque-btn" data-idx="${s.id}" title="Excluir saque" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;transition:background 0.2s;flex-shrink:0;" onmouseover="this.style.background='#590707'" onmouseout="this.style.background='transparent'">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>`;
+        }
+        html += '</div>';
+        lista.innerHTML = html;
+      }
+      lista.querySelectorAll('.del-saque-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const idx = parseInt(btn.dataset.idx);
+          if (!await mostrarConfirm('Excluir este saque?')) return;
+          state.saques = state.saques.filter(s => s.id !== idx);
+          recalcularCapital();
+          persistir();
+          renderizarSaques();
+          atualizarSaquesDashboard();
+          atualizarPaginaCapital();
+          atualizarResumoDiario();
+          atualizarChartDiario();
+          mostrarToast('Saque removido!', 'sucesso');
+        });
+      });
+    }
+
+    function atualizarSaquesDashboard() {
+      const saques = getSaquesDoMes();
+      const total = saques.reduce((s, x) => s + x.valor, 0);
+      const semanal = saques.filter(s => s.tipo === 'semanal').reduce((s, x) => s + x.valor, 0);
+      const mensal = saques.filter(s => s.tipo === 'mensal').reduce((s, x) => s + x.valor, 0);
+      document.getElementById('dashSaqueTotal').textContent = fmtB(total);
+      document.getElementById('dashSaqueSemanal').textContent = fmtB(semanal);
+      document.getElementById('dashSaqueMensal').textContent = fmtB(mensal);
+    }
+
+    document.getElementById('adicionarSaqueBtn').addEventListener('click', () => {
+      const dia = parseInt(document.getElementById('novoSaqueDia').value);
+      const valorSemanal = parseVal(document.getElementById('novoSaqueSemanal').value);
+      const valorMensal = parseVal(document.getElementById('novoSaqueMensal').value);
+
+      if (!dia || dia < 1 || dia > 31) { mostrarToast('Informe um dia válido (1-31).', 'aviso'); return; }
+      if (valorSemanal <= 0 && valorMensal <= 0) { mostrarToast('Informe um valor de saque válido.', 'aviso'); return; }
+
+      if (valorSemanal > 0) {
+        if (state.saques.some(s => s.mes === state.mesCalendario && s.dia === dia && s.tipo === 'semanal')) { mostrarToast('Já existe um saque semanal no dia ' + dia + '.', 'erro'); return; }
+        state.saques.push({ id: state.saques.reduce((m, s) => Math.max(m, s.id), 0) + 1, dia, tipo: 'semanal', valor: valorSemanal, mes: state.mesCalendario });
+      }
+      if (valorMensal > 0) {
+        if (state.saques.some(s => s.mes === state.mesCalendario && s.dia === dia && s.tipo === 'mensal')) { mostrarToast('Já existe um saque mensal no dia ' + dia + '.', 'erro'); return; }
+        state.saques.push({ id: state.saques.reduce((m, s) => Math.max(m, s.id), 0) + 1, dia, tipo: 'mensal', valor: valorMensal, mes: state.mesCalendario });
+      }
+      persistir();
+      recalcularCapital();
+      renderizarSaques();
+      atualizarSaquesDashboard();
+      atualizarPaginaCapital();
+      atualizarResumoDiario();
+      atualizarChartDiario();
+      document.getElementById('novoSaqueDia').value = '';
+      document.getElementById('novoSaqueSemanal').value = '';
+      document.getElementById('novoSaqueMensal').value = '';
+      mostrarToast('Saques adicionados!', 'sucesso');
+    });
 
     function renderizarRegistros() {
       const registrosMes = getRegistrosDoMes();
@@ -1087,6 +1629,10 @@
       if (diaEditandoId) {
         const idx = state.registros.findIndex(r => r.dia === diaEditandoId && r.mes === state.mesCalendario);
         if (idx === -1) return;
+        if (state.registros.some((r, i) => i !== idx && r.dia === dia && r.mes === state.mesCalendario)) {
+          mostrarToast('Dia ' + dia + ' já registrado.', 'erro');
+          return;
+        }
         const antigo = state.registros[idx];
         state.capitalAtual -= antigo.resultado;
         state.registros[idx] = { dia, acertos, erros, resultado, mes: state.mesCalendario };
@@ -1180,6 +1726,17 @@
 
     adicionarDiaBtn.addEventListener('click', adicionarDia);
 
+    document.getElementById('calcularResultadoBtn').addEventListener('click', () => {
+      const acertos = parseInt(novoAcertos.value) || 0;
+      const erros = parseInt(novoErros.value) || 0;
+      if (acertos <= 0 && erros <= 0) { mostrarToast('Informe acertos ou erros primeiro.', 'aviso'); return; }
+      const cfg = lerConfigForm();
+      const valorTrade = state.capitalAtual * (cfg.porcTrade / 100);
+      const resultado = (acertos * valorTrade * (cfg.stopWin / 100)) - (erros * valorTrade * (cfg.stopLoss / 100));
+      novoResultado.value = resultado.toFixed(2).replace('.', ',');
+      mostrarToast('Resultado calculado: ' + fmt(resultado), 'sucesso');
+    });
+
     // ================================================================
     // TABS
     // ================================================================
@@ -1189,10 +1746,21 @@
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        if (btn.dataset.tab === 'dashboard') {
+          atualizarPaginaCapital();
+          atualizarResumoDiario();
+          atualizarChartDiario();
+          atualizarSaquesDashboard();
+          atualizarProjecaoSaque();
+          atualizarChartLucroSaque();
+        }
         if (btn.dataset.tab === 'projecao') {
           atualizarMesAno();
           atualizarProjecaoDiaria();
           renderizarRegistros();
+          atualizarProjecaoSaque();
+          renderizarSaques();
+          atualizarSaquesDashboard();
         }
         if (btn.dataset.tab === 'calendario') {
           renderizarCalendario();
@@ -1296,11 +1864,11 @@
     const calcNotasLista = document.getElementById('calcNotasLista');
 
     function carregarNotas() {
-      try { return JSON.parse(localStorage.getItem('calcNotasArr')) || []; } catch { return []; }
+      try { return JSON.parse(localStorage.getItem(chaveUsuario('calcNotasArr'))) || []; } catch { return []; }
     }
 
     function salvarNotasArr(arr) {
-      localStorage.setItem('calcNotasArr', JSON.stringify(arr));
+      localStorage.setItem(chaveUsuario('calcNotasArr'), JSON.stringify(arr));
     }
 
     function renderizarNotas() {
@@ -1314,7 +1882,7 @@
         const n = notas[i];
         const card = document.createElement('div');
         card.className = 'bg-white border border-gray-200 p-2.5 rounded-lg text-xs';
-        card.innerHTML = '<div class="flex items-start justify-between gap-2"><div class="flex-1"><div class="font-semibold text-slate-800 mb-1 whitespace-pre-wrap">' + n.text + '</div><div class="text-[#94A3B8] text-[10px]">' + n.date + '</div></div><button class="del-nota-btn text-[#94A3B8] hover:text-[#EF4444] transition p-1 flex-shrink-0" data-idx="' + i + '"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div>';
+        card.innerHTML = '<div class="flex items-start justify-between gap-2"><div class="flex-1"><div class="font-semibold text-slate-800 mb-1 whitespace-pre-wrap">' + esc(n.text) + '</div><div class="text-[#94A3B8] text-[10px]">' + esc(n.date) + '</div></div><button class="del-nota-btn text-[#94A3B8] hover:text-[#EF4444] transition p-1 flex-shrink-0" data-idx="' + i + '"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div>';
         calcNotasLista.appendChild(card);
       }
       calcNotasLista.querySelectorAll('.del-nota-btn').forEach(btn => {
@@ -1376,9 +1944,8 @@
       if (state.capitalAtual < cfg.valorInicial && state.registros.length === 0) {
         state.capitalAtual = cfg.valorInicial;
       }
-      // Recalculate capitalAtual based on initial value + results
-      state.capitalAtual = cfg.valorInicial + state.registros.reduce((s, r) => s + r.resultado, 0);
-      if (state.capitalAtual < 0) state.capitalAtual = 0;
+      // Recalculate capitalAtual based on initial value + results - saques
+      recalcularCapital();
       persistir();
       atualizarPaginaCapital();
       atualizarResumoDiario();
@@ -1402,8 +1969,7 @@
       for (const r of state.registros) {
         if (!r.mes) r.mes = mesAtual;
       }
-      state.capitalAtual = state.config.valorInicial + state.registros.reduce((s, r) => s + r.resultado, 0);
-      if (state.capitalAtual < 0) state.capitalAtual = 0;
+      recalcularCapital();
     }
 
     // ================================================================
@@ -1510,12 +2076,31 @@
       document.getElementById('resumoTotalOpsCal').textContent = totalAcertos + totalErros;
       const elTotalRes = document.getElementById('resumoTotalResultado');
       elTotalRes.textContent = fmtB(totalResultado);
-      elTotalRes.style.color = totalResultado >= 0 ? '#10B981' : '#EF4444';
+      elTotalRes.className = 'text-base font-bold ' + (totalResultado >= 0 ? 'text-profit' : 'text-red-500');
     }
 
     function selecionarDiaCal(dia) {
       calDiaSelecionado = dia;
       renderizarCalendario();
+    }
+
+    function capitalParaDia(dia) {
+      const chave = state.mesCalendario + String(dia).padStart(2, '0');
+      let cap = state.config.valorInicial;
+      const saquesAntes = state.saques
+        .filter(s => (s.mes + String(s.dia).padStart(2, '0')) < chave)
+        .reduce((t, s) => t + s.valor, 0);
+      cap -= saquesAntes;
+      const todos = [...state.registros].sort((a, b) => {
+        const ka = (a.mes || state.mesCalendario) + String(a.dia).padStart(2, '0');
+        const kb = (b.mes || state.mesCalendario) + String(b.dia).padStart(2, '0');
+        return ka < kb ? -1 : ka > kb ? 1 : 0;
+      });
+      for (const r of todos) {
+        if (((r.mes || state.mesCalendario) + String(r.dia).padStart(2, '0')) < chave) cap += r.resultado;
+        else break;
+      }
+      return cap;
     }
 
     function mostrarDetalhesDiaCal(dia) {
@@ -1527,6 +2112,10 @@
       const info = document.getElementById('calDiaInfo');
       info.innerHTML = '';
 
+      const capInicioDia = capitalParaDia(dia);
+      const capResultadoDia = registros.reduce((s, r) => s + r.resultado, 0);
+      const capAtualDia = capInicioDia + capResultadoDia;
+
       if (registros.length === 0) {
         info.innerHTML = '<div class="text-xs text-[#94A3B8]">Nenhum registro neste dia.</div>';
       } else {
@@ -1534,7 +2123,7 @@
           const resultadoClass = r.resultado >= 0 ? 'text-profit' : 'text-red-500';
           const card = document.createElement('div');
           card.className = 'bg-white border border-gray-200 rounded-lg p-3 text-xs';
-          card.innerHTML = '<div class="flex justify-between mb-1"><span class="stat-label">Acertos</span><span class="font-bold text-slate-800">' + r.acertos + '</span></div><div class="flex justify-between mb-1"><span class="stat-label">Erros</span><span class="font-bold text-slate-800">' + r.erros + '</span></div><div class="flex justify-between"><span class="stat-label">Resultado</span><span class="font-bold ' + resultadoClass + '">' + fmtB(r.resultado) + '</span></div>';
+          card.innerHTML = '<div class="flex justify-between mb-1"><span class="stat-label">Capital inicial do dia</span><span class="font-bold text-slate-800">' + fmtB(capInicioDia) + '</span></div><div class="flex justify-between mb-1"><span class="stat-label">Capital atual</span><span class="font-bold text-slate-800">' + fmtB(capAtualDia) + '</span></div><div class="flex justify-between mb-1"><span class="stat-label">Acertos</span><span class="font-bold text-slate-800">' + r.acertos + '</span></div><div class="flex justify-between mb-1"><span class="stat-label">Erros</span><span class="font-bold text-slate-800">' + r.erros + '</span></div><div class="flex justify-between"><span class="stat-label">Resultado</span><span class="font-bold ' + resultadoClass + '">' + fmtB(r.resultado) + '</span></div>';
           info.appendChild(card);
         }
       }
@@ -1578,21 +2167,41 @@
       atualizarProjecaoDiaria();
       renderizarRegistros();
       renderizarCalendario();
+      atualizarProjecaoSaque();
+      renderizarSaques();
+      atualizarSaquesDashboard();
     }
 
     document.getElementById('diarioMesAnterior').addEventListener('click', () => navegarMesDir(-1));
     document.getElementById('diarioMesSeguinte').addEventListener('click', () => navegarMesDir(1));
+
+    document.getElementById('diarioHojeBtn').addEventListener('click', () => {
+      const d = new Date();
+      state.mesCalendario = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+      calDiaSelecionado = null;
+      navegarMesDir(0);
+    });
+
+    document.getElementById('calHojeBtn').addEventListener('click', () => {
+      const d = new Date();
+      state.mesCalendario = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+      calDiaSelecionado = d.getDate();
+      renderizarCalendario();
+    });
 
     // ================================================================
     // INIT
     // ================================================================
     atualizarMesAno();
     initChartDiario();
+    initChartLucroSaque();
     aplicarConfigNoForm(state.config);
     atualizarPaginaCapital();
     atualizarResumoDiario();
     atualizarChartDiario();
     renderizarRegistros();
+    renderizarSaques();
+    atualizarSaquesDashboard();
     const hojeDia = new Date().getDate();
     calDiaSelecionado = hojeDia;
     renderizarCalendario();
