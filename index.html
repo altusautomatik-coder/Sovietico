@@ -603,7 +603,6 @@
             <label class="stat-label block mb-1">Resultado (R$)</label>
             <input type="text" id="novoResultado" value="" inputmode="decimal" placeholder="ex: 120,00" />
           </div>
-          <button class="btn-secondary h-[42px]" id="calcularResultadoBtn" title="Calcula o resultado usando a config (valor por trade, stop win/loss)">Calcular Resultado</button>
           <button class="btn-primary h-[42px]" id="adicionarDiaBtn">Adicionar Dia</button>
           <button class="btn-danger h-[42px]" id="cancelarDiaBtn" style="display:none">Cancelar</button>
         </div>
@@ -1725,17 +1724,6 @@
     });
 
     adicionarDiaBtn.addEventListener('click', adicionarDia);
-
-    document.getElementById('calcularResultadoBtn').addEventListener('click', () => {
-      const acertos = parseInt(novoAcertos.value) || 0;
-      const erros = parseInt(novoErros.value) || 0;
-      if (acertos <= 0 && erros <= 0) { mostrarToast('Informe acertos ou erros primeiro.', 'aviso'); return; }
-      const cfg = lerConfigForm();
-      const valorTrade = state.capitalAtual * (cfg.porcTrade / 100);
-      const resultado = (acertos * valorTrade * (cfg.stopWin / 100)) - (erros * valorTrade * (cfg.stopLoss / 100));
-      novoResultado.value = resultado.toFixed(2).replace('.', ',');
-      mostrarToast('Resultado calculado: ' + fmt(resultado), 'sucesso');
-    });
 
     // ================================================================
     // TABS
