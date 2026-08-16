@@ -181,6 +181,9 @@
     .btn-secondary { background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-default); font-weight: 700; padding: 0.65rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; transition: border-color 0.2s, transform 0.1s; }
     .btn-secondary:hover { border-color: var(--border-hover); }
     .btn-secondary:active { transform: scale(0.97); }
+    .modo-btn { background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-default); font-weight: 700; padding: 0.55rem 0.75rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.8rem; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+    .modo-btn:hover { border-color: var(--border-hover); }
+    .modo-btn.active { background: var(--green); color: #FFFFFF; border-color: var(--green); }
     .stat-label { font-size: 0.7rem; letter-spacing: 0.04em; color: var(--text-secondary); font-weight: 600; }
     .stat-card {
       background: var(--bg-card);
@@ -494,7 +497,12 @@
     <div id="tab-config" class="tab-content">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
-          <h2 class="text-sm font-bold text-slate-800 mb-4">Projeção e Status</h2>
+          <h2 class="text-sm font-bold text-slate-800 mb-3">Projeção e Status</h2>
+          <div class="grid grid-cols-2 gap-2 mb-2">
+            <button id="modoFixaBtn" class="modo-btn" title="% por trade e stops sobre o valor inicial do capital">Mão Fixa</button>
+            <button id="modoCompostaBtn" class="modo-btn" title="% por trade e stops sobre o valor atual do capital">Juros Compostos</button>
+          </div>
+          <p class="text-xs text-gray-500 mb-4" id="modoDesc">% por trade e stops calculados sobre o valor atual do capital.</p>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div class="stat-card border-l-4 border-l-slate-700">
               <div class="stat-label">Capital Inicial</div>
@@ -967,6 +975,7 @@
         if (doc.exists) {
           const data = doc.data();
           if (data.config) state.config = data.config;
+          if (!state.config.modoProjecao) state.config.modoProjecao = 'composta';
           if (data.registros) state.registros = data.registros;
           if (data.saques) state.saques = data.saques;
           if (!state.saques) state.saques = [];
@@ -1020,6 +1029,7 @@
           persistir();
         }
         aplicarConfigNoForm(state.config);
+        aplicarModoUI();
         atualizarPaginaCapital();
         atualizarResumoDiario();
         atualizarChartDiario();
@@ -1050,11 +1060,13 @@
             delete data.bancaAtual;
           }
           if (!data.saques) data.saques = [];
+          if (!data.config) data.config = { valorInicial: 1000, metaLucro: 20, porcTrade: 2, stopWin: 10, stopLoss: 5 };
+          if (!data.config.modoProjecao) data.config.modoProjecao = 'composta';
           return data;
         }
       } catch (_) {}
       return {
-        config: { valorInicial: 1000, metaLucro: 20, porcTrade: 2, stopWin: 10, stopLoss: 5 },
+        config: { valorInicial: 1000, metaLucro: 20, porcTrade: 2, stopWin: 10, stopLoss: 5, modoProjecao: 'composta' },
         registros: [],
         saques: [],
         capitalAtual: null,
@@ -1062,7 +1074,7 @@
     }
 
     function limparEstado() {
-      state.config = { valorInicial: 1000, metaLucro: 20, porcTrade: 2, stopWin: 10, stopLoss: 5 };
+      state.config = { valorInicial: 1000, metaLucro: 20, porcTrade: 2, stopWin: 10, stopLoss: 5, modoProjecao: 'composta' };
       state.registros = [];
       state.saques = [];
       state.capitalAtual = state.config.valorInicial;
@@ -1339,6 +1351,7 @@
         porcTrade: parseFloat(cfgPorcTrade.value) || 0,
         stopWin: parseFloat(cfgStopWin.value) || 0,
         stopLoss: parseFloat(cfgStopLoss.value) || 0,
+        modoProjecao: (state && state.config && state.config.modoProjecao === 'fixa') ? 'fixa' : 'composta',
       };
     }
 
@@ -1356,9 +1369,10 @@
       const capitalAtual = state.capitalAtual;
       const variacao = capitalInicial > 0 ? ((capitalAtual - capitalInicial) / capitalInicial) * 100 : 0;
       const metaValor = capitalInicial * (cfg.metaLucro / 100);
-      const stopWinValor = capitalAtual * (cfg.stopWin / 100);
-      const stopLossValor = capitalAtual * (cfg.stopLoss / 100);
-      const valorTrade = capitalAtual * (cfg.porcTrade / 100);
+      const baseCapital = cfg.modoProjecao === 'fixa' ? capitalInicial : capitalAtual;
+      const stopWinValor = baseCapital * (cfg.stopWin / 100);
+      const stopLossValor = baseCapital * (cfg.stopLoss / 100);
+      const valorTrade = baseCapital * (cfg.porcTrade / 100);
 
       dispCapitalInicial.textContent = fmtB(capitalInicial);
       dispCapitalAtual.textContent = fmtB(capitalAtual);
@@ -1942,6 +1956,26 @@
       mostrarToast('Configurações salvas!', 'sucesso');
     });
 
+    function aplicarModoUI() {
+      const modo = (state.config.modoProjecao === 'fixa') ? 'fixa' : 'composta';
+      document.getElementById('modoFixaBtn').classList.toggle('active', modo === 'fixa');
+      document.getElementById('modoCompostaBtn').classList.toggle('active', modo === 'composta');
+      document.getElementById('modoDesc').textContent = modo === 'fixa'
+        ? '% por trade e stops calculados sobre o valor inicial do capital.'
+        : '% por trade e stops calculados sobre o valor atual do capital.';
+    }
+
+    function setModoProjecao(modo) {
+      state.config.modoProjecao = modo;
+      aplicarModoUI();
+      atualizarPaginaCapital();
+      persistir();
+      mostrarToast(modo === 'fixa' ? 'Modo Mão Fixa ativado!' : 'Modo Juros Compostos ativado!', 'sucesso');
+    }
+
+    document.getElementById('modoFixaBtn').addEventListener('click', () => setModoProjecao('fixa'));
+    document.getElementById('modoCompostaBtn').addEventListener('click', () => setModoProjecao('composta'));
+
     // ================================================================
     // MÊS / ANO
     // ================================================================
@@ -2184,6 +2218,7 @@
     initChartDiario();
     initChartLucroSaque();
     aplicarConfigNoForm(state.config);
+    aplicarModoUI();
     atualizarPaginaCapital();
     atualizarResumoDiario();
     atualizarChartDiario();
