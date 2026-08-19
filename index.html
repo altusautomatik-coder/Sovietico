@@ -594,23 +594,30 @@
           </div>
           <h2 class="text-sm font-bold text-slate-800" id="diarioFormTitle">Adicionar Dia</h2>
         </div>
-        <div class="flex flex-wrap items-end gap-3 mb-5 p-4 rounded-lg bg-gray-50 border border-gray-200">
-          <div class="flex-1 min-w-[80px]">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-4 p-4 rounded-lg bg-gray-50 border border-gray-200">
+          <div>
             <label class="stat-label block mb-1">Dia</label>
             <input type="number" id="novoDia" value="" min="1" max="31" placeholder="ex: 1-31" />
           </div>
-          <div class="flex-1 min-w-[80px]">
+          <div>
             <label class="stat-label block mb-1">Acertos</label>
             <input type="number" id="novoAcertos" value="" min="0" placeholder="ex: 5" />
           </div>
-          <div class="flex-1 min-w-[80px]">
+          <div>
             <label class="stat-label block mb-1">Erros</label>
             <input type="number" id="novoErros" value="" min="0" placeholder="ex: 3" />
           </div>
-          <div class="flex-1 min-w-[100px]">
+          <div>
+            <label class="stat-label block mb-1">Capital (R$)</label>
+            <input type="text" id="novoCapitalCorretora" value="" inputmode="decimal" placeholder="ex: 1.070,00" title="Capital disponível na corretora" />
+          </div>
+          <div>
             <label class="stat-label block mb-1">Resultado (R$)</label>
             <input type="text" id="novoResultado" value="" inputmode="decimal" placeholder="ex: 120,00" />
           </div>
+        </div>
+        <div class="flex flex-wrap gap-3 mb-3">
+          <button class="btn-secondary h-[42px]" id="calcularResultadoDiaBtn" title="Calcula o resultado do dia: capital na corretora - capital atual">Calcular Resultado</button>
           <button class="btn-primary h-[42px]" id="adicionarDiaBtn">Adicionar Dia</button>
           <button class="btn-danger h-[42px]" id="cancelarDiaBtn" style="display:none">Cancelar</button>
         </div>
@@ -1129,6 +1136,7 @@
     const novoAcertos = $('novoAcertos');
     const novoErros = $('novoErros');
     const novoResultado = $('novoResultado');
+    const novoCapitalCorretora = $('novoCapitalCorretora');
     const adicionarDiaBtn = $('adicionarDiaBtn');
 
     // ================================================================
@@ -1666,6 +1674,7 @@
         novoAcertos.value = '0';
         novoErros.value = '0';
         novoResultado.value = '0';
+        novoCapitalCorretora.value = '';
         return;
       }
 
@@ -1686,6 +1695,7 @@
       novoAcertos.value = '0';
       novoErros.value = '0';
       novoResultado.value = '0';
+      novoCapitalCorretora.value = '';
       mostrarToast('Dia ' + dia + ' adicionado!', 'sucesso');
     }
 
@@ -1732,12 +1742,24 @@
       document.getElementById('novoAcertos').value = '0';
       document.getElementById('novoErros').value = '0';
       document.getElementById('novoResultado').value = '0';
+      document.getElementById('novoCapitalCorretora').value = '';
       document.getElementById('diarioFormTitle').textContent = 'Adicionar Dia';
       document.getElementById('adicionarDiaBtn').textContent = 'Adicionar Dia';
       document.getElementById('cancelarDiaBtn').style.display = 'none';
     });
 
     adicionarDiaBtn.addEventListener('click', adicionarDia);
+
+    document.getElementById('calcularResultadoDiaBtn').addEventListener('click', () => {
+      const dia = parseInt(novoDia.value);
+      const capitalCorretora = parseVal(novoCapitalCorretora.value);
+      if (!dia || dia < 1 || dia > 31) { mostrarToast('Informe um dia válido (1-31).', 'aviso'); return; }
+      if (!(capitalCorretora > 0)) { mostrarToast('Informe o valor do capital na corretora.', 'aviso'); return; }
+      const capitalBase = state.capitalAtual;
+      const resultado = capitalCorretora - capitalBase;
+      novoResultado.value = resultado.toFixed(2).replace('.', ',');
+      mostrarToast((resultado >= 0 ? 'Lucro do dia: ' : 'Prejuízo do dia: ') + fmt(resultado) + ' (capital corretora ' + fmtB(capitalCorretora) + ' - capital atual ' + fmtB(capitalBase) + ')', 'sucesso');
+    });
 
     // ================================================================
     // TABS
